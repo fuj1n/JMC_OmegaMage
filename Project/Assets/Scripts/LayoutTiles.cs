@@ -125,7 +125,7 @@ public class LayoutTiles : MonoBehaviour
                 switch (rawType)
                 {
                     case "X": // Mage starting position
-                        Mage.instance.pos = tile.pos;
+                        Mage.instance.transform.position = tile.transform.position;
                         break;
                 }
             }

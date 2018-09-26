@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 
-public class Tile : PT_MonoBehaviour
+public class Tile : MonoBehaviour
 {
     public string type;
 
     private string texture_val;
     private int height_val = 0;
     private Vector3 position_val;
+
+    private new Renderer renderer;
+
+    private void Awake()
+    {
+        renderer = GetComponent<Renderer>();
+    }
 
     /// <summary>
     /// Height moves the tile up or down, walls have height of 1

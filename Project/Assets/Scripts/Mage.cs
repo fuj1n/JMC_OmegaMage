@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-//using System.Linq;
 
-public class Mage : PT_MonoBehaviour
+public class Mage : MonoBehaviour
 {
     public static Mage instance;
     public const bool DEBUG = true;
@@ -17,15 +17,30 @@ public class Mage : PT_MonoBehaviour
     /// </summary>
     public float mouseDragDistance = 5;
 
+    public GameObject tapIndicator;
+
     /// <summary>
     /// How much of the screen should be used
     /// </summary>
     public float activeScreenWidth = 1;
 
+    /// <summary>
+    /// The movement speed of the mage
+    /// </summary>
+    public float speed = 2F;
+
+    [Header("Elements")]
+    public GameObject[] elementPrefabs;
+    public float elementRotationDistance = 0.5F;
+    public float elementRotationSpeed = 0.5F;
+    public int maxNumSelectedElements = 1;
+
     // public bool _______________; // ???
 
-    public MousePhase mousePhase = MousePhase.IDLE;
-    public List<MouseInfo> mouseInfoBuffer = new List<MouseInfo>();
+    private MousePhase mousePhase = MousePhase.IDLE;
+    private List<MouseInfo> mouseInfoBuffer = new List<MouseInfo>();
+
+    private List<Element> selectedElements = new List<Element>();
 
     public MouseInfo lastMouseInfo
     {
@@ -36,10 +51,19 @@ public class Mage : PT_MonoBehaviour
         }
     }
 
+    private bool walking = false;
+    private Vector3 walkTarget;
+
+    private Transform character;
+    private new Rigidbody rigidbody;
+
     private void Awake()
     {
         instance = this;
         mousePhase = MousePhase.IDLE;
+
+        character = transform.Find("CharacterTrans");
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -75,7 +99,7 @@ public class Mage : PT_MonoBehaviour
                 else if (Time.time - mouseInfoBuffer[0].time > mouseTapTime)
                 {
                     float dragDist = (lastMouseInfo.screenPos - mouseInfoBuffer[0].screenPos).magnitude;
-                    if (dragDist >= mouseDragDistance)
+                    if (dragDist >= mouseDragDistance || selectedElements.Count == 0)
                         mousePhase = MousePhase.DRAG;
                 }
                 break;
@@ -91,6 +115,37 @@ public class Mage : PT_MonoBehaviour
                     MouseDrag();
                 }
                 break;
+        }
+
+        OrbitSelectedElements();
+    }
+
+    private void FixedUpdate()
+    {
+        if (walking)
+        {
+            rigidbody.velocity = (walkTarget - transform.position).normalized * speed;
+
+            // If we're very close to the target, stop moving
+            if ((walkTarget - transform.position).magnitude < speed * Time.fixedDeltaTime)
+            {
+                transform.position = walkTarget;
+                StopWalking();
+            }
+        }
+        else
+        {
+            rigidbody.velocity = Vector3.zero;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Tile tile = collision.gameObject.GetComponent<Tile>();
+
+        if (tile && tile.height > 0F)
+        {
+            StopWalking();
         }
     }
 
@@ -119,16 +174,120 @@ public class Mage : PT_MonoBehaviour
     private void MouseTap()
     {
         this.ConditionalLog(DEBUG, "Mage.MouseTap()");
+
+        WalkTo(lastMouseInfo.position);
+        ShowTap(lastMouseInfo.position);
     }
 
     private void MouseDrag()
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDrag()");
+
+        WalkTo(lastMouseInfo.position);
     }
 
     private void MouseDragUp()
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDragUp()");
+
+        StopWalking();
+    }
+
+    private void OrbitSelectedElements()
+    {
+        if (selectedElements.Count == 0)
+            return;
+
+        float tau = Mathf.PI * 2;
+        float rotPerElement = tau / selectedElements.Count;
+        float theta0 = elementRotationSpeed * Time.time * tau;
+
+        for (int i = 0; i < selectedElements.Count; i++)
+        {
+            // Determine rotation angle
+            float theta = theta0 + i * rotPerElement;
+            Element element = selectedElements[i];
+            Vector3 vec = new Vector3(Mathf.Cos(theta), Mathf.Sin(theta), 0) * elementRotationDistance;
+            vec.z = -0.5F;
+            element.transform.localPosition = vec;
+        }
+    }
+
+    /// <summary>
+    /// Tells the mage to walk towards and <see cref="Face(Vector3)"/> <paramref name="target"/>
+    /// </summary>
+    public void WalkTo(Vector3 target)
+    {
+        walkTarget = target;
+        walkTarget.z = 0;
+        walking = true;
+        Face(walkTarget);
+    }
+
+    /// <summary>
+    /// Faces the mage towards <paramref name="pos"/>
+    /// </summary>
+    public void Face(Vector3 pos)
+    {
+        Vector3 delta = pos - transform.position;
+        // Get rotation around Z that points X axis towards pos
+        float rot = Mathf.Rad2Deg * Mathf.Atan2(delta.y, delta.x);
+        character.rotation = Quaternion.Euler(0, 0, rot);
+    }
+
+    /// <summary>
+    /// Tells the mage to stop walking
+    /// </summary>
+    public void StopWalking()
+    {
+        walking = false;
+        rigidbody.velocity = Vector3.zero;
+    }
+
+    /// <summary>
+    /// Spawns the tap effect at the specificed position
+    /// </summary>
+    /// <param name="pos"></param>
+    public void ShowTap(Vector3 pos)
+    {
+        Instantiate(tapIndicator, pos, Quaternion.identity);
+    }
+
+    /// <summary>
+    /// Adds an <paramref name="element"/> if less than <see cref="maxNumSelectedElements"/> is selected
+    /// </summary>
+    public void SelectElement(ElementType element)
+    {
+        this.ConditionalLog(DEBUG, "Select element: {0}", element);
+
+        if (selectedElements.Select(e => e.type).Contains(element))
+            return;
+
+        if (element == ElementType.NONE)
+        {
+            ClearElements();
+            return;
+        }
+
+        if (maxNumSelectedElements == 1)
+            ClearElements();
+
+        if (selectedElements.Count >= maxNumSelectedElements)
+            return;
+
+        GameObject go = Instantiate(elementPrefabs[(int)element], transform);
+        Element el = go.GetComponent<Element>();
+
+        selectedElements.Add(el);
+    }
+
+    /// <summary>
+    /// Clears the selected elements and destroys all orbiters
+    /// </summary>
+    public void ClearElements()
+    {
+        selectedElements.ForEach(o => Destroy(o.gameObject));
+        selectedElements.Clear();
     }
 }
 
@@ -140,6 +299,16 @@ public enum MousePhase
     IDLE,
     DOWN,
     DRAG
+}
+
+public enum ElementType
+{
+    EARTH,
+    WATER,
+    AIR,
+    FIRE,
+    AETHER,
+    NONE
 }
 
 /// <summary>
