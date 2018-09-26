@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -22,12 +23,16 @@ public class LayoutTiles : MonoBehaviour
     public GameObject tilePrefab; // Prefab for all tiles
     public TileTexture[] tileTextures; // A list of named textures for tiles
 
+    public GameObject portal;
+
     //public bool _____________; // ???
 
     private PT_XMLReader roomsXMLR;
     private PT_XMLHashList roomsXML;
     private Tile[,] tiles;
     private Transform tileAnchor;
+
+    private bool firstRoom = true;
 
     private void Awake()
     {
@@ -62,6 +67,15 @@ public class LayoutTiles : MonoBehaviour
     /// <param name="room">The room entry from XML file</param>
     public void BuildRoom(PT_XMLHashtable room)
     {
+        // Clean up
+        foreach (Transform t in tileAnchor)
+        {
+            Destroy(t.gameObject);
+        }
+
+        Mage.instance.transform.position = Vector3.left * 1000;
+        Mage.instance.ClearInput();
+
         // Get the texture names for the floors and walls from <room> attributes
         string floorTexture = room.att("floor");
         string wallTexture = room.att("wall");
@@ -77,6 +91,7 @@ public class LayoutTiles : MonoBehaviour
         tiles = new Tile[ROOM_SIZE, ROOM_SIZE];
 
         float maxY = roomRows.Length - 1;
+        List<Portal> portals = new List<Portal>();
 
         for (int y = 0; y < roomRows.Length; y++)
         {
@@ -125,11 +140,53 @@ public class LayoutTiles : MonoBehaviour
                 switch (rawType)
                 {
                     case "X": // Mage starting position
-                        Mage.instance.transform.position = tile.transform.position;
+                        if (firstRoom)
+                        {
+                            Mage.instance.transform.position = tile.transform.position;
+                            roomNumber = int.Parse(room.att("num"), System.Globalization.NumberStyles.HexNumber);
+                            firstRoom = false;
+                        }
                         break;
+                    //TODO: get rid of this garbage below
+                    case "0":
+                    case "1":
+                    case "2":
+                    case "3":
+                    case "4":
+                    case "5":
+                    case "6":
+                    case "7":
+                    case "8":
+                    case "9":
+                    case "A":
+                    case "B":
+                    case "C":
+                    case "D":
+                    case "E":
+                    case "F":
+                        // Create portal
+                        GameObject gop = Instantiate(this.portal, tile.position, Quaternion.identity, tileAnchor);
+                        Portal portal = gop.GetComponent<Portal>();
+                        portal.destinationRoom = int.Parse(rawType, System.Globalization.NumberStyles.HexNumber);
+                        portals.Add(portal);
+                        break;
+
                 }
             }
         }
+
+        foreach (Portal portal in portals)
+        {
+            if (portal.destinationRoom == roomNumber)
+            {
+                Mage.instance.StopWalking();
+                Mage.instance.transform.position = portal.transform.position;
+                portal.justArrived = true;
+                firstRoom = false;
+            }
+        }
+
+        roomNumber = int.Parse(room.att("num"), System.Globalization.NumberStyles.HexNumber);
     }
 
     /// <summary>

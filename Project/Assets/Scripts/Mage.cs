@@ -7,6 +7,7 @@ public class Mage : MonoBehaviour
     public static Mage instance;
     public const bool DEBUG = true;
 
+    [Header("Input")]
     /// <summary>
     /// Time it takes to register a tap
     /// </summary>
@@ -35,21 +36,28 @@ public class Mage : MonoBehaviour
     public float elementRotationSpeed = 0.5F;
     public int maxNumSelectedElements = 1;
 
+    public Color[] elementColors;
+
+    public float lineMinDelta = 0.1F;
+    public float lineMaxDelta = 0.5F;
+    public float lineMaxLength = 8F;
+
+    public GameObject fireGroundSpell;
+
     // public bool _______________; // ???
+
+    protected Transform spellAnchor;
+
+    private float totalLineLength;
+    private List<Vector3> linePoints = new List<Vector3>();
+    protected LineRenderer lineRender;
+    protected float lineZ = -0.1F; // Z depth
 
     private MousePhase mousePhase = MousePhase.IDLE;
     private List<MouseInfo> mouseInfoBuffer = new List<MouseInfo>();
 
+    private string actionStartTag; // Mage, Ground or Enemy
     private List<Element> selectedElements = new List<Element>();
-
-    public MouseInfo lastMouseInfo
-    {
-        get
-        {
-            if (mouseInfoBuffer.Count == 0) return null;
-            return mouseInfoBuffer[mouseInfoBuffer.Count - 1];
-        }
-    }
 
     private bool walking = false;
     private Vector3 walkTarget;
@@ -64,6 +72,12 @@ public class Mage : MonoBehaviour
 
         character = transform.Find("CharacterTrans");
         rigidbody = GetComponent<Rigidbody>();
+
+        lineRender = GetComponentInChildren<LineRenderer>();
+        lineRender.enabled = false;
+
+        spellAnchor = new GameObject("Spell Anchor").transform;
+
     }
 
     private void Update()
@@ -82,7 +96,7 @@ public class Mage : MonoBehaviour
                     mouseInfoBuffer.Clear();
                     AddMouseInfo();
 
-                    if (mouseInfoBuffer[0].hit)
+                    if (mouseInfoBuffer.FirstOrDefault().hit)
                     {
                         MouseDown();
                         mousePhase = MousePhase.DOWN;
@@ -96,9 +110,9 @@ public class Mage : MonoBehaviour
                     MouseTap();
                     mousePhase = MousePhase.IDLE;
                 }
-                else if (Time.time - mouseInfoBuffer[0].time > mouseTapTime)
+                else if (Time.time - mouseInfoBuffer.FirstOrDefault().time > mouseTapTime)
                 {
-                    float dragDist = (lastMouseInfo.screenPos - mouseInfoBuffer[0].screenPos).magnitude;
+                    float dragDist = (lastMouseInfo.screenPos - mouseInfoBuffer.FirstOrDefault().screenPos).magnitude;
                     if (dragDist >= mouseDragDistance || selectedElements.Count == 0)
                         mousePhase = MousePhase.DRAG;
                 }
@@ -169,28 +183,77 @@ public class Mage : MonoBehaviour
     private void MouseDown()
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDown()");
+
+        GameObject clicked = mouseInfoBuffer.FirstOrDefault().hitInfo.collider.gameObject;
+        GameObject taggedParent = Utils.FindTaggedParent(clicked);
+        if (!taggedParent)
+            actionStartTag = "";
+        else
+            actionStartTag = taggedParent.tag;
     }
 
     private void MouseTap()
     {
         this.ConditionalLog(DEBUG, "Mage.MouseTap()");
 
-        WalkTo(lastMouseInfo.position);
-        ShowTap(lastMouseInfo.position);
+        switch (actionStartTag)
+        {
+            case "Mage":
+                break;
+            case "Ground":
+                WalkTo(mouseInfoBuffer.LastOrDefault().position);
+                ShowTap(mouseInfoBuffer.LastOrDefault().position);
+                break;
+        }
     }
 
     private void MouseDrag()
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDrag()");
 
-        WalkTo(lastMouseInfo.position);
+        if (actionStartTag != "Ground")
+            return;
+
+        if (selectedElements.Count == 0)
+            WalkTo(mouseInfoBuffer.LastOrDefault().position);
+        else
+        {
+            AddPointToLineRender(mouseInfoBuffer.LastOrDefault().position);
+        }
     }
 
     private void MouseDragUp()
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDragUp()");
 
-        StopWalking();
+        if (actionStartTag != "Ground") return;
+
+        if (selectedElements.Count == 0)
+            StopWalking();
+        else
+        {
+            CastGroundSpell();
+            ClearLineRender();
+        }
+    }
+
+    private void CastGroundSpell()
+    {
+        if (selectedElements.Count == 0)
+            return;
+
+        switch (selectedElements.First().type)
+        {
+            case ElementType.FIRE:
+                foreach (Vector3 point in linePoints)
+                {
+                    Instantiate(fireGroundSpell, point, Quaternion.identity, spellAnchor);
+                }
+                break;
+                //TODO: elements
+        }
+
+        ClearElements();
     }
 
     private void OrbitSelectedElements()
@@ -211,6 +274,72 @@ public class Mage : MonoBehaviour
             vec.z = -0.5F;
             element.transform.localPosition = vec;
         }
+    }
+
+    #region Line Render
+    private void AddPointToLineRender(Vector3 point)
+    {
+        point.z = lineZ;
+
+        if (linePoints.Count == 0)
+        {
+            linePoints.Add(point);
+            totalLineLength = 0F;
+            return;
+        }
+
+        if (totalLineLength > lineMaxLength)
+            return;
+
+        Vector3 pt0 = linePoints.Last();
+        Vector3 direction = point - pt0;
+        float delta = direction.magnitude;
+        direction.Normalize();
+
+        if (delta < lineMinDelta)
+            return;
+
+        totalLineLength += delta;
+
+        if (delta > lineMaxDelta)
+        {
+            int numToAdd = Mathf.CeilToInt(delta / lineMaxDelta);
+            float midDelta = delta / numToAdd;
+
+            for (int i = 1; i < numToAdd; i++)
+            {
+                Vector3 pointMid = pt0 + (direction * midDelta * i);
+                linePoints.Add(pointMid);
+            }
+        }
+
+        linePoints.Add(point);
+        UpdateLineRender();
+    }
+
+    private void UpdateLineRender()
+    {
+        int element = (int)selectedElements[0].type;
+
+        lineRender.startColor = elementColors[element];
+        lineRender.endColor = lineRender.startColor;
+
+        lineRender.positionCount = linePoints.Count;
+        lineRender.SetPositions(linePoints.ToArray());
+
+        lineRender.enabled = true;
+    }
+
+    private void ClearLineRender()
+    {
+        lineRender.enabled = false;
+        linePoints.Clear();
+    }
+    #endregion
+
+    public void ClearInput()
+    {
+        mousePhase = MousePhase.IDLE;
     }
 
     /// <summary>
