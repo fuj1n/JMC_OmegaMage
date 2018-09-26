@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -16,19 +17,17 @@ public class LayoutTiles : MonoBehaviour
 {
     public static LayoutTiles instance;
 
-    public const int ROOM_SIZE = 100;
-
-    public TextAsset roomsFile; // The rooms.xml file
-    public int roomNumber = 0; // Current room number, because who stores numbers as strings?
+    public TextAsset roomsFile; // The rooms JSON file
+    public char roomId = '0'; // Current room ID
     public GameObject tilePrefab; // Prefab for all tiles
     public TileTexture[] tileTextures; // A list of named textures for tiles
+
+    private RoomsFile roomsData;
 
     public GameObject portal;
 
     //public bool _____________; // ???
 
-    private PT_XMLReader roomsXMLR;
-    private PT_XMLHashList roomsXML;
     private Tile[,] tiles;
     private Transform tileAnchor;
 
@@ -42,13 +41,12 @@ public class LayoutTiles : MonoBehaviour
         GameObject anchor = new GameObject("tileAnchor");
         tileAnchor = anchor.transform;
 
-        // Read the XML file
-        roomsXMLR = new PT_XMLReader(); // Create an XML reader
-        roomsXMLR.Parse(roomsFile.text); // Parse the rooms XML file
-        roomsXML = roomsXMLR.xml["xml"][0]["room"];
+        // Read the JSON file
+        roomsData = JsonConvert.DeserializeObject<RoomsFile>(roomsFile.text);
+        roomId = roomsData.startingRoom;
 
-        // Build the nth room
-        BuildRoom(roomNumber);
+        // Build the room with given ID
+        BuildRoom(roomId);
     }
 
     /// <summary>
@@ -62,10 +60,10 @@ public class LayoutTiles : MonoBehaviour
     }
 
     /// <summary>
-    /// Build a room for an XML room entry
+    /// Build a room for a room entry
     /// </summary>
-    /// <param name="room">The room entry from XML file</param>
-    public void BuildRoom(PT_XMLHashtable room)
+    /// <param name="room">The room entry from JSON file</param>
+    public void BuildRoom(Room room)
     {
         // Clean up
         foreach (Transform t in tileAnchor)
@@ -77,18 +75,18 @@ public class LayoutTiles : MonoBehaviour
         Mage.instance.ClearInput();
 
         // Get the texture names for the floors and walls from <room> attributes
-        string floorTexture = room.att("floor");
-        string wallTexture = room.att("wall");
+        string floorTexture = room.floor;
+        string wallTexture = room.wall;
 
-        // Split the room into rows of tiles based on line feeds in the xml file
-        string[] roomRows = room.text.Split('\n');
+        // Split the room into rows of tiles based on line feeds in the json file
+        string[] roomRows = room.layout.Split('\n');
         for (int i = 0; i < roomRows.Length; i++)
         {
-            roomRows[i] = roomRows[i].Trim('\t');
+            roomRows[i] = roomRows[i].Trim('\t', '\r');
         }
 
         // Clear the tiles array
-        tiles = new Tile[ROOM_SIZE, ROOM_SIZE];
+        tiles = new Tile[roomsData.roomSize, roomsData.roomSize];
 
         float maxY = roomRows.Length - 1;
         List<Portal> portals = new List<Portal>();
@@ -143,32 +141,19 @@ public class LayoutTiles : MonoBehaviour
                         if (firstRoom)
                         {
                             Mage.instance.transform.position = tile.transform.position;
-                            roomNumber = int.Parse(room.att("num"), System.Globalization.NumberStyles.HexNumber);
+                            roomId = roomsData.rooms.Where(kvp => kvp.Value == room).Single().Key;
                             firstRoom = false;
                         }
                         break;
-                    //TODO: get rid of this garbage below
-                    case "0":
-                    case "1":
-                    case "2":
-                    case "3":
-                    case "4":
-                    case "5":
-                    case "6":
-                    case "7":
-                    case "8":
-                    case "9":
-                    case "A":
-                    case "B":
-                    case "C":
-                    case "D":
-                    case "E":
-                    case "F":
-                        // Create portal
-                        GameObject gop = Instantiate(this.portal, tile.position, Quaternion.identity, tileAnchor);
-                        Portal portal = gop.GetComponent<Portal>();
-                        portal.destinationRoom = int.Parse(rawType, System.Globalization.NumberStyles.HexNumber);
-                        portals.Add(portal);
+                    default:
+                        if (roomsData.portals.Contains(rawType[0]))
+                        {
+                            // Create portal
+                            GameObject gop = Instantiate(this.portal, tile.position, Quaternion.identity, tileAnchor);
+                            Portal portal = gop.GetComponent<Portal>();
+                            portal.destinationRoom = rawType[0];
+                            portals.Add(portal);
+                        }
                         break;
 
                 }
@@ -177,7 +162,7 @@ public class LayoutTiles : MonoBehaviour
 
         foreach (Portal portal in portals)
         {
-            if (portal.destinationRoom == roomNumber)
+            if (portal.destinationRoom == roomId)
             {
                 Mage.instance.StopWalking();
                 Mage.instance.transform.position = portal.transform.position;
@@ -186,26 +171,21 @@ public class LayoutTiles : MonoBehaviour
             }
         }
 
-        roomNumber = int.Parse(room.att("num"), System.Globalization.NumberStyles.HexNumber);
+        roomId = roomsData.rooms.Where(kvp => kvp.Value == room).Single().Key;
     }
 
     /// <summary>
-    /// Grabs room object and calls <see cref="BuildRoom(PT_XMLHashtable)"/>
+    /// Grabs <see cref="Room"/> object and calls <see cref="BuildRoom(Room)"/>
     /// </summary>
-    /// <param name="roomNumber">The room number</param>
-    public void BuildRoom(int roomNumber)
+    /// <param name="roomId">The character identifier of the room</param>
+    public void BuildRoom(char roomId)
     {
-        // Use the hexadecimal tostring converter to defeat tutorial's reason for storing it as string
-        string roomId = roomNumber.ToString("X");
-
-        PT_XMLHashtable room = roomsXML.Cast<PT_XMLHashtable>().Where(x => x.att("num") == roomId).FirstOrDefault();
-
-        if (room == default(PT_XMLHashtable))
+        if (!roomsData.rooms.ContainsKey(roomId))
         {
-            Utils.tr("ERROR", "LayoutTiles.BuildRoom(int)", "Room not found: " + roomId);
+            Debug.LogError("Cannot find room with ID " + roomId);
             return;
         }
 
-        BuildRoom(room);
+        BuildRoom(roomsData.rooms[roomId]);
     }
 }

@@ -2,7 +2,7 @@
 
 public class Portal : MonoBehaviour
 {
-    public int destinationRoom;
+    public char destinationRoom;
     [HideInInspector]
     public bool justArrived = false;
 
