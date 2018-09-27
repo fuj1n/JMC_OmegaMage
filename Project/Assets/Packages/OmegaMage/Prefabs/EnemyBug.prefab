@@ -214,6 +214,7 @@ GameObject:
   - component: {fileID: 400024}
   - component: {fileID: 13600000}
   - component: {fileID: 5400000}
+  - component: {fileID: 114606850669541450}
   m_Layer: 0
   m_Name: EnemyBug
   m_TagString: Enemy
@@ -1620,3 +1621,16 @@ Prefab:
   m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 100024}
   m_IsPrefabAsset: 1
+--- !u!114 &114606850669541450
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6820ce4e52c49b40af37c401afc774d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0.5
+  maxHealth: 10
