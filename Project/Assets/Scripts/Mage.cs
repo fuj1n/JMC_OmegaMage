@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using DG.Tweening;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Mage : MonoBehaviour
 {
@@ -50,7 +52,9 @@ public class Mage : MonoBehaviour
     public float knockbackDuration = 0.5F;
     public float invincibilityDuration = 0.5F;
 
-    private float damageCooldown;
+    public int invincibilityBlinkCount = 3;
+
+    private float health = 1F;
 
     // public bool _______________; // ???
 
@@ -72,6 +76,12 @@ public class Mage : MonoBehaviour
 
     private Transform character;
     private new Rigidbody rigidbody;
+    private Material coreMaterial;
+
+    private Sequence invincibilitySequence;
+
+    private Vector3 knockbackDirection;
+    private float knockbackTime;
 
     private void Awake()
     {
@@ -86,6 +96,21 @@ public class Mage : MonoBehaviour
 
         spellAnchor = new GameObject("Spell Anchor").transform;
 
+        Transform view = character.Find("View_Character");
+        coreMaterial = view.GetChild(0).GetComponent<Renderer>().material;
+        foreach (Transform t in view)
+        {
+            t.GetComponent<Renderer>().material = coreMaterial;
+        }
+        coreMaterial.SetInt("_ZWrite", 1); // Enable ZWrite so our material doesn't act weird with transparency on
+
+        invincibilitySequence = DOTween.Sequence();
+        for (int i = 0; i < invincibilityBlinkCount; i++)
+        {
+            invincibilitySequence.Append(coreMaterial.DOFade(0F, invincibilityDuration / invincibilityBlinkCount / 2));
+            invincibilitySequence.Append(coreMaterial.DOFade(1F, invincibilityDuration / invincibilityBlinkCount / 2));
+        }
+        invincibilitySequence.Pause().SetAutoKill(false);
     }
 
     private void Update()
@@ -144,6 +169,14 @@ public class Mage : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (knockbackTime > 0F)
+        {
+            rigidbody.velocity = knockbackDirection * (knockbackDistance / knockbackDuration);
+            knockbackTime -= Time.fixedDeltaTime;
+
+            return;
+        }
+
         if (walking)
         {
             rigidbody.velocity = (walkTarget - transform.position).normalized * speed;
@@ -163,12 +196,53 @@ public class Mage : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Tile tile = collision.gameObject.GetComponent<Tile>();
+        GameObject source = collision.gameObject;
+
+        Tile tile = source.GetComponent<Tile>();
 
         if (tile && tile.height > 0F)
         {
             StopWalking();
         }
+
+        IEnemy enemy = source.GetComponent<IEnemy>();
+
+        if (enemy != null)
+            CollisionDamage(enemy);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        IEnemy enemy = other.GetComponent<IEnemy>();
+        if (enemy != null)
+            CollisionDamage(enemy);
+    }
+
+    private void CollisionDamage(IEnemy enemy)
+    {
+        if (invincibilitySequence.IsPlaying())
+            return;
+
+        StopWalking();
+        ClearInput();
+
+        health -= enemy.GetDamage() / maxHealth;
+        if (health <= 0F)
+        {
+            Die(); // 死ね
+            return;
+        }
+
+        knockbackTime = knockbackDuration;
+        knockbackDirection = (transform.position - enemy.transform.position).normalized;
+
+        invincibilitySequence.Restart();
+    }
+
+    private void Die()
+    {
+        DOTween.KillAll();
+        SceneManager.LoadScene(0);
     }
 
     private MouseInfo AddMouseInfo()

@@ -130,7 +130,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400016, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.05
       objectReference: {fileID: 0}
     - target: {fileID: 400016, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
       propertyPath: m_LocalRotation.x
@@ -155,6 +155,10 @@ Prefab:
     - target: {fileID: 100016, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
       propertyPath: m_Name
       value: Mage
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400000, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
+      propertyPath: m_Constraints
+      value: 120
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
@@ -259,6 +263,11 @@ MonoBehaviour:
   - name: stone
     texture: {fileID: 2800000, guid: 51913b142672e46bfb3c90299e5f38f4, type: 3}
   portal: {fileID: 100000, guid: aa127d48e561348ed8c31db53e98ef53, type: 2}
+  enemyTemplates:
+  - type: EnemyBug
+    template: {fileID: 100024, guid: ba42e4efdc6af4de7be09893346c4bb5, type: 2}
+  - type: EnemySpiker
+    template: {fileID: 100002, guid: c73ae1002011944afad4491c1b0eb9d8, type: 2}
 --- !u!114 &759518443
 MonoBehaviour:
   m_ObjectHideFlags: 0

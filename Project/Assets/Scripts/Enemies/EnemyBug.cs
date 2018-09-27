@@ -1,25 +1,17 @@
-﻿using DG.Tweening;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class EnemyBug : MonoBehaviour
+[EnemyFactory('b')]
+public class EnemyBug : EnemyBase
 {
     public float speed = 0.5F;
-    public float maxHealth;
-
 
     // public bool ____________________; // ??? Why do these exist?
 
-    private float health = 1F;
     private Vector3 walkTarget;
     private bool walking;
     private Transform character;
 
     private new Rigidbody rigidbody;
-    private Dictionary<ElementType, float> damageSources = new Dictionary<ElementType, float>();
-
-    private Tween damageTween;
 
     private void Awake()
     {
@@ -31,31 +23,6 @@ public class EnemyBug : MonoBehaviour
     private void Update()
     {
         WalkTo(Mage.instance.transform.position);
-    }
-
-    private void LateUpdate()
-    {
-        float damage = 0F;
-        foreach (KeyValuePair<ElementType, float> source in damageSources)
-        {
-            damage += source.Value;
-        }
-
-        health -= damage / maxHealth;
-        health = Mathf.Clamp01(health);
-
-        damageSources.Clear();
-
-        if (health <= 0F)
-            Die();
-
-        if (damage > 0F)
-            if (damageTween == null || !damageTween.IsPlaying())
-            {
-                character.localScale = new Vector3(.8F, .8F, .8F);
-                damageTween = character.DOScale(1F, 0.25F);
-            }
-
     }
 
     #region Walking
@@ -90,7 +57,7 @@ public class EnemyBug : MonoBehaviour
         rigidbody.velocity = Vector3.zero;
     }
 
-    private void FixedUpdate()
+    public override void DoAI()
     {
         if (walking)
         {
@@ -110,35 +77,8 @@ public class EnemyBug : MonoBehaviour
     }
     #endregion
 
-    /// <summary>
-    /// Deals damage to the entity
-    /// </summary>
-    /// <param name="amount">The amount of damage to deal</param>
-    /// <param name="element">The source of the damage</param>
-    /// <param name="dot">Whether the amount should be multiplied by dt</param>
-    public void Damage(float amount, ElementType element, bool dot)
+    public override bool CanTakeDamage(ElementType element)
     {
-        if (dot)
-            amount *= Time.deltaTime;
-
-        switch (element)
-        {
-            case ElementType.FIRE:
-                damageSources[element] = Mathf.Max(damageSources.SingleOrDefault(x => x.Key == element).Value, amount);
-                break;
-            case ElementType.AIR:
-                break;
-            default:
-                damageSources[element] += amount;
-                break;
-        }
-    }
-
-    /// <summary>
-    /// Kills the entity
-    /// </summary>
-    public void Die()
-    {
-        Destroy(gameObject);
+        return element != ElementType.AIR;
     }
 }

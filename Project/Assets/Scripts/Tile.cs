@@ -2,7 +2,7 @@
 
 public class Tile : MonoBehaviour
 {
-    public string type;
+    public char type;
 
     private string texture_val;
     private int height_val = 0;

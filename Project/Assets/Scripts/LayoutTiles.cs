@@ -28,12 +28,14 @@ public class LayoutTiles : MonoBehaviour
 
     //public bool _____________; // ???
 
+    public TypeTemplatePair[] enemyTemplates = { };
+
     private Tile[,] tiles;
     private Transform tileAnchor;
 
     private bool firstRoom = true;
 
-    private void Awake()
+    private void Start()
     {
         instance = this;
 
@@ -97,25 +99,25 @@ public class LayoutTiles : MonoBehaviour
             {
                 int height = 0;
                 string tileTexture = floorTexture;
-                string type, rawType;
+                char type, rawType;
 
                 // Get the character representing the tile
-                type = rawType = roomRows[y][x].ToString();
+                type = rawType = roomRows[y][x];
                 switch (rawType)
                 {
-                    case " ":
-                    case "_":
+                    case ' ':
+                    case '_':
                         continue;
-                    case ".": // default floor
+                    case '.': // default floor
                         tileTexture = floorTexture;
                         break;
-                    case "|": // default wall
+                    case '|': // default wall
                         height = 1;
                         tileTexture = wallTexture;
                         break;
                     default:
                         // interpret as floor
-                        type = ".";
+                        type = '.';
                         break;
                 }
 
@@ -137,22 +139,32 @@ public class LayoutTiles : MonoBehaviour
 
                 switch (rawType)
                 {
-                    case "X": // Mage starting position
+                    case 'X': // Mage starting position
                         if (firstRoom)
                         {
-                            Mage.instance.transform.position = tile.transform.position;
+                            // Raise the mage cause for some reason the tutorial places them in the ground
+                            Mage.instance.transform.position = tile.transform.position + Vector3.back * .6F;
                             roomId = roomsData.rooms.Where(kvp => kvp.Value == room).Single().Key;
                             firstRoom = false;
                         }
                         break;
                     default:
-                        if (roomsData.portals.Contains(rawType[0]))
+                        if (roomsData.portals.Contains(rawType))
                         {
                             // Create portal
                             GameObject gop = Instantiate(this.portal, tile.position, Quaternion.identity, tileAnchor);
                             Portal portal = gop.GetComponent<Portal>();
-                            portal.destinationRoom = rawType[0];
+                            portal.destinationRoom = rawType;
                             portals.Add(portal);
+                        }
+                        else
+                        {
+                            IEnemy enemy = EnemyFactory.CreateEnemy(rawType, enemyTemplates);
+                            if (enemy == null)
+                                break;
+
+                            enemy.transform.position = tile.position;
+                            enemy.transform.SetParent(tileAnchor);
                         }
                         break;
 
@@ -165,7 +177,7 @@ public class LayoutTiles : MonoBehaviour
             if (portal.destinationRoom == roomId)
             {
                 Mage.instance.StopWalking();
-                Mage.instance.transform.position = portal.transform.position;
+                Mage.instance.transform.position = portal.transform.position + Vector3.back * .1F;
                 portal.justArrived = true;
                 firstRoom = false;
             }

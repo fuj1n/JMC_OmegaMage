@@ -44,8 +44,8 @@ public class FireGroundSpell : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        EnemyBug recepient = other.GetComponent<EnemyBug>();
+        IEnemy recepient = other.GetComponent<IEnemy>();
         if (recepient != null)
-            recepient.Damage(damagePerSecond, ElementType.FIRE, true);
+            recepient.TakeDamage(damagePerSecond, ElementType.FIRE, true);
     }
 }
