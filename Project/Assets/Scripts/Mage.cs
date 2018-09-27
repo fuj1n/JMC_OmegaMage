@@ -44,6 +44,14 @@ public class Mage : MonoBehaviour
 
     public GameObject fireGroundSpell;
 
+    [Header("Health")]
+    public float maxHealth = 4F;
+    public float knockbackDistance = 1F;
+    public float knockbackDuration = 0.5F;
+    public float invincibilityDuration = 0.5F;
+
+    private float damageCooldown;
+
     // public bool _______________; // ???
 
     protected Transform spellAnchor;
