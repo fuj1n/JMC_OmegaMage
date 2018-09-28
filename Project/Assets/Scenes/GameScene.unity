@@ -322,10 +322,13 @@ MonoBehaviour:
     - {fileID: 2800000, guid: 754a326cdb3729141a61693c8565106f, type: 3}
     - {fileID: 2800000, guid: bb855152d3084534a8fe9a975b7df3f4, type: 3}
     - {fileID: 2800000, guid: 2ae9c6a53a221c246a32dcb9d2585aef, type: 3}
-    ditherChance: 0.1
+    ditherChance: 0.05
   - name: stone
     texture: {fileID: 2800000, guid: 51913b142672e46bfb3c90299e5f38f4, type: 3}
-    ditherTex: []
+    ditherTex:
+    - {fileID: 2800000, guid: b2b7cc888143db64fbf04f7c5fdd7537, type: 3}
+    - {fileID: 2800000, guid: e217618dbcc9def4bb6a82c0c803fe06, type: 3}
+    - {fileID: 2800000, guid: 9fa870e6bdc61444fbd2e5975092732d, type: 3}
     ditherChance: 0.1
   portal: {fileID: 100000, guid: aa127d48e561348ed8c31db53e98ef53, type: 2}
   enemyTemplates:
