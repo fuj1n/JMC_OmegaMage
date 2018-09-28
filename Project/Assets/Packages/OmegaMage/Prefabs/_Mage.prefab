@@ -783,6 +783,7 @@ MonoBehaviour:
   - {fileID: 1798717455455472, guid: 4309d801f2077d34faa241383f7f3189, type: 2}
   - {fileID: 1661202281421610, guid: b57989ca022e3e4469b479f86cc09b52, type: 2}
   - {fileID: 1302754088566606, guid: 14812fc8b1b4f914a9361350a9633df9, type: 2}
+  - {fileID: 1433540419482186, guid: c03349114e0ae2d45a8d19e871312211, type: 2}
   maxHealth: 4
   knockbackDistance: 1
   knockbackDuration: 0.5
