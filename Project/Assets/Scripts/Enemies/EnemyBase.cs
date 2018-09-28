@@ -75,7 +75,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
             }
     }
 
-    public float GetDamage()
+    public virtual float GetDamage()
     {
         return damage;
     }
@@ -95,7 +95,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         return true;
     }
 
-    public void TakeDamage(float amount, ElementType element, bool dot)
+    public virtual void TakeDamage(float amount, ElementType element, bool dot)
     {
         if (!CanTakeDamage(element))
             return;
@@ -112,12 +112,12 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         damageSources[element] = Mathf.Max(damageSources.SingleOrDefault(x => x.Key == element).Value, amount);
     }
 
-    public void Die()
+    public virtual void Die()
     {
         Destroy(gameObject);
     }
 
-    public void SetKnockback(Vector3 knockbackDirection, float knockbackDistance, float knockbackDuration)
+    public virtual void SetKnockback(Vector3 knockbackDirection, float knockbackDistance, float knockbackDuration)
     {
         this.knockbackDirection = knockbackDirection;
         this.knockbackDistance = knockbackDistance;
@@ -131,5 +131,9 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         OnImmobilized();
     }
 
-    public virtual void OnImmobilized() { }
+    public virtual void OnImmobilized()
+    {
+        if (rigidbody)
+            rigidbody.velocity = Vector3.zero;
+    }
 }

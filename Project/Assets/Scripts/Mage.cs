@@ -263,6 +263,11 @@ public class Mage : MonoBehaviour
         invincibilitySequence.Restart();
     }
 
+    public float GetHealth()
+    {
+        return health;
+    }
+
     private void Die()
     {
         DOTween.KillAll();

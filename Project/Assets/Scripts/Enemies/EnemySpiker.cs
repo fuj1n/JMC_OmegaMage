@@ -56,4 +56,9 @@ public class EnemySpiker : EnemyBase
                 break;
         }
     }
+
+    public override void SetKnockback(Vector3 knockbackDirection, float knockbackDistance, float knockbackDuration)
+    {
+        return; // No knockback
+    }
 }
