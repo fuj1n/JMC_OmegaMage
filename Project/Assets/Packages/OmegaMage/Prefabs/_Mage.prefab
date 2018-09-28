@@ -24,7 +24,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 400002}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: View_Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 3300000}
   - component: {fileID: 6500000}
   - component: {fileID: 2300000}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: arm_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 3300002}
   - component: {fileID: 6500002}
   - component: {fileID: 2300002}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: arm_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78,7 +78,7 @@ GameObject:
   - component: {fileID: 3300004}
   - component: {fileID: 6500004}
   - component: {fileID: 2300004}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: torso_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 3300006}
   - component: {fileID: 6500006}
   - component: {fileID: 2300006}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: torso_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   - component: {fileID: 3300008}
   - component: {fileID: 13500000}
   - component: {fileID: 2300008}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 3300010}
   - component: {fileID: 6500008}
   - component: {fileID: 2300010}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -289,7 +289,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100016}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400018}
@@ -577,7 +577,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 120
   m_CollisionDetection: 1
 --- !u!65 &6500000
 BoxCollider:
@@ -755,7 +755,7 @@ MonoBehaviour:
   mouseTapTime: 0.1
   mouseDragDistance: 5
   tapIndicator: {fileID: 100000, guid: 65bee36374982469f8b4797b1b515e38, type: 2}
-  activeScreenWidth: 0.75
+  activeScreenWidth: 0.8666
   speed: 2
   elementPrefabs:
   - {fileID: 100000, guid: 66ad41f2a71ba4b23a3c246befe4bde8, type: 2}
@@ -770,7 +770,6 @@ MonoBehaviour:
   - {r: 0, g: 0.11764706, b: 1, a: 1}
   - {r: 0, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 1, g: 1, b: 0, a: 1}
   - {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
   lineMinDelta: 0.1
   lineMaxDelta: 0.5
@@ -780,35 +779,7 @@ MonoBehaviour:
   knockbackDistance: 1
   knockbackDuration: 0.5
   invincibilityDuration: 0.5
-  damageGradient:
-    serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 0}
-    key2: {r: 1, g: 1, b: 1, a: 1}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 1}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 1}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 65535
-    ctime2: 21395
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 10879
-    atime2: 21758
-    atime3: 31981
-    atime4: 42860
-    atime5: 53739
-    atime6: 65535
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 7
+  invincibilityBlinkCount: 3
 --- !u!120 &120033175948105762
 LineRenderer:
   m_ObjectHideFlags: 1

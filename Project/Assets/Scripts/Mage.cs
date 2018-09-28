@@ -81,6 +81,9 @@ public class Mage : MonoBehaviour
     private Vector3 knockbackDirection;
     private float knockbackTime;
 
+    private HashSet<ElementType> unlockedElements = new HashSet<ElementType>() { ElementType.NONE };
+    private Dictionary<ElementType, float> elementCharge = new Dictionary<ElementType, float>();
+
     private void Awake()
     {
         instance = this;
@@ -109,6 +112,9 @@ public class Mage : MonoBehaviour
             invincibilitySequence.Append(coreMaterial.DOFade(1F, invincibilityDuration / invincibilityBlinkCount / 2));
         }
         invincibilitySequence.Pause().SetAutoKill(false);
+
+        // Unlock all the elements for now
+        System.Enum.GetValues(typeof(ElementType)).Cast<ElementType>().ToList().ForEach(e => UnlockElement(e));
     }
 
     private void Update()
@@ -462,11 +468,15 @@ public class Mage : MonoBehaviour
         Instantiate(tapIndicator, pos, Quaternion.identity);
     }
 
+    #region Elements
     /// <summary>
     /// Adds an <paramref name="element"/> if less than <see cref="maxNumSelectedElements"/> is selected
     /// </summary>
     public void SelectElement(ElementType element)
     {
+        if (!IsUnlockedElement(element) || GetElementCharge(element) < 1F)
+            return;
+
         this.ConditionalLog(DEBUG, "Select element: {0}", element);
 
         if (selectedElements.Select(e => e.type).Contains(element))
@@ -498,6 +508,37 @@ public class Mage : MonoBehaviour
         selectedElements.ForEach(o => Destroy(o.gameObject));
         selectedElements.Clear();
     }
+
+    /// <summary>
+    /// Gets whether the given <paramref name="element"/> is unlocked
+    /// </summary>
+    /// <returns>True if the element is unlocked</returns>
+    public bool IsUnlockedElement(ElementType element)
+    {
+        return unlockedElements.Contains(element);
+    }
+
+    /// <summary>
+    /// Unlocks the given <paramref name="element"/>
+    /// </summary>
+    public void UnlockElement(ElementType element)
+    {
+        unlockedElements.Add(element);
+        elementCharge[element] = 1F;
+    }
+
+    /// <summary>
+    /// Gets the charge of the given <paramref name="element"/>
+    /// </summary>
+    /// <returns>The charge percentage of the given element</returns>
+    public float GetElementCharge(ElementType element)
+    {
+        if (element == ElementType.NONE)
+            return 1F;
+
+        return elementCharge.SingleOrDefault(x => x.Key == element).Value;
+    }
+    #endregion
 }
 
 /// <summary>
@@ -516,7 +557,6 @@ public enum ElementType
     WATER,
     AIR,
     FIRE,
-    AETHER,
     NONE
 }
 

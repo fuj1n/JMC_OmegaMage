@@ -165,7 +165,6 @@ public class LayoutTiles : MonoBehaviour
                             enemy.transform.SetParent(tileAnchor);
                         }
                         break;
-
                 }
             }
         }
