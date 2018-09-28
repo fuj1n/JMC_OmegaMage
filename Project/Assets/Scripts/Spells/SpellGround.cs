@@ -58,9 +58,7 @@ public class SpellGround : SpellBase
             if (damagePerSecond != 0F)
                 recepient.TakeDamage(damagePerSecond, element, true);
             if (hasKnockback)
-            {
                 recepient.SetKnockback((recepient.transform.position - transform.position).normalized, knockbackDistance, knockbackDuration);
-            }
         }
     }
 

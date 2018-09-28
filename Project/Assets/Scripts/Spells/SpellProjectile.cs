@@ -7,6 +7,12 @@ public class SpellProjectile : SpellBase
 
     public float maxAliveTime = 0F;
 
+    public bool hasKnockback = false;
+    [ConditionalHide(true, ConditionalSourceField = "hasKnockback")]
+    public float knockbackDistance = 1F;
+    [ConditionalHide(true, ConditionalSourceField = "hasKnockback")]
+    public float knockbackDuration = 0.5F;
+
     private Transform target;
     private float aliveTime;
 
@@ -29,9 +35,11 @@ public class SpellProjectile : SpellBase
     {
         if (other.transform == target)
         {
-            IEnemy enemy = target.GetComponent<IEnemy>();
-            if (enemy != null)
-                enemy.TakeDamage(damage, element, false);
+            IEnemy recepient = target.GetComponent<IEnemy>();
+            if (recepient != null)
+                recepient.TakeDamage(damage, element, false);
+            if (hasKnockback)
+                recepient.SetKnockback((recepient.transform.position - transform.position).normalized, knockbackDistance, knockbackDuration);
 
             Destroy(gameObject);
         }

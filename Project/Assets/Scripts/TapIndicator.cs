@@ -32,9 +32,4 @@ public class TapIndicator : MonoBehaviour
             colorSequence.Append(renderMaterial.DOColor(colors[i], lifeTime / colors.Length));
         }
     }
-
-    private void Update()
-    {
-        Debug.Log(renderMaterial.color.a);
-    }
 }

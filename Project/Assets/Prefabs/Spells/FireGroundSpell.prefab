@@ -4642,7 +4642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 3
-  cost: 25
+  cost: 250000
   duration: 4
   durationVariance: 0.5
   fadeAnimation: 1

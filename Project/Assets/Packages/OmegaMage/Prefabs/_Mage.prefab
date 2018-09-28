@@ -771,6 +771,7 @@ MonoBehaviour:
   - {r: 0, g: 1, b: 1, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
+  elementRecoverPerSecond: 6400000064000000640000006400000040420f00
   lineMinDelta: 0.1
   lineMaxDelta: 0.5
   lineMaxLength: 8
@@ -780,6 +781,8 @@ MonoBehaviour:
   - {fileID: 1295828760850666, guid: 094fffa87756465489a223c7c824651d, type: 2}
   - {fileID: 1238242845075370, guid: b23429baa0305fd4aa00950aa823e505, type: 2}
   - {fileID: 1798717455455472, guid: 4309d801f2077d34faa241383f7f3189, type: 2}
+  - {fileID: 1661202281421610, guid: b57989ca022e3e4469b479f86cc09b52, type: 2}
+  - {fileID: 1302754088566606, guid: 14812fc8b1b4f914a9361350a9633df9, type: 2}
   maxHealth: 4
   knockbackDistance: 1
   knockbackDuration: 0.5

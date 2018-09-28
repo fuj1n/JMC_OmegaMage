@@ -100,10 +100,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 1
-  cost: 10
+  cost: 100000
   damage: 5
   speed: 5
   maxAliveTime: 5
+  hasKnockback: 0
+  knockbackDistance: 1
+  knockbackDuration: 0.5
 --- !u!136 &136987932519559462
 CapsuleCollider:
   m_ObjectHideFlags: 1

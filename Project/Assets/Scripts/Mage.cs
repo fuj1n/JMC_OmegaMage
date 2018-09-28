@@ -38,7 +38,8 @@ public class Mage : MonoBehaviour
     public float elementRotationSpeed = 0.5F;
     public int maxNumSelectedElements = 1;
 
-    public Color[] elementColors;
+    public Color[] elementColors = { };
+    public int[] elementRecoverPerSecond = { };
 
     public float lineMinDelta = 0.1F;
     public float lineMaxDelta = 0.5F;
@@ -86,7 +87,7 @@ public class Mage : MonoBehaviour
 
     private HashSet<ElementType> unlockedElements = new HashSet<ElementType>() { ElementType.NONE };
     private Dictionary<ElementType, int> elementCharge = new Dictionary<ElementType, int>();
-    private Dictionary<ElementType, int> elementalMaxCharge = new Dictionary<ElementType, int>();
+    private Dictionary<ElementType, int> elementMaxCharge = new Dictionary<ElementType, int>();
 
     private void Awake()
     {
@@ -119,7 +120,6 @@ public class Mage : MonoBehaviour
 
         // Unlock all the elements for now
         System.Enum.GetValues(typeof(ElementType)).Cast<ElementType>().ToList().ForEach(e => UnlockElement(e));
-
 
         spellsInst = spells.Select(s => s.GetComponent<ISpell>()).ToArray();
     }
@@ -176,6 +176,11 @@ public class Mage : MonoBehaviour
         }
 
         OrbitSelectedElements();
+
+        foreach (ElementType element in System.Enum.GetValues(typeof(ElementType)))
+        {
+            RecoverElementCharge(element, Mathf.RoundToInt(elementRecoverPerSecond[(int)element] * Time.deltaTime));
+        }
     }
 
     private void FixedUpdate()
@@ -538,7 +543,7 @@ public class Mage : MonoBehaviour
     public void UnlockElement(ElementType element)
     {
         unlockedElements.Add(element);
-        elementCharge[element] = GetMaxElementCharge(element);
+        elementCharge[element] = GetElementMaxCharge(element);
     }
 
     /// <summary>
@@ -547,7 +552,7 @@ public class Mage : MonoBehaviour
     /// <returns>The charge percentage of the given element</returns>
     public float GetElementChargeAsPercent(ElementType element)
     {
-        return 1F * GetElementCharge(element) / GetMaxElementCharge(element);
+        return 1F * GetElementCharge(element) / GetElementMaxCharge(element);
     }
 
     /// <summary>
@@ -557,7 +562,7 @@ public class Mage : MonoBehaviour
     public int GetElementCharge(ElementType element)
     {
         if (!elementCharge.ContainsKey(element))
-            elementCharge[element] = GetMaxElementCharge(element);
+            elementCharge[element] = GetElementMaxCharge(element);
 
         return elementCharge[element];
     }
@@ -566,12 +571,20 @@ public class Mage : MonoBehaviour
     /// Gets the maximum chage of the given <paramref name="element"/>
     /// </summary>
     /// <returns>The maximum chage</returns>
-    public int GetMaxElementCharge(ElementType element)
+    public int GetElementMaxCharge(ElementType element)
     {
-        if (!elementalMaxCharge.ContainsKey(element))
-            elementalMaxCharge[element] = 100;
+        if (!elementMaxCharge.ContainsKey(element))
+            elementMaxCharge[element] = 1000000;
 
-        return elementalMaxCharge[element];
+        return elementMaxCharge[element];
+    }
+
+    /// <summary>
+    /// Recover <paramref name="charge"/> for the given <paramref name="element"/> clamped at the max elemental charge
+    /// </summary>
+    public void RecoverElementCharge(ElementType element, int charge)
+    {
+        elementCharge[element] = Mathf.Clamp(GetElementCharge(element) + charge, 0, GetElementMaxCharge(element));
     }
     #endregion
 
@@ -585,6 +598,11 @@ public class Mage : MonoBehaviour
                 Debug.LogError("Cannot assign spell that does not implement ISpell");
             }
         }
+
+        if (elementRecoverPerSecond.Length != System.Enum.GetValues(typeof(ElementType)).Length)
+            System.Array.Resize(ref elementRecoverPerSecond, System.Enum.GetValues(typeof(ElementType)).Length);
+        if (elementColors.Length != System.Enum.GetValues(typeof(ElementType)).Length)
+            System.Array.Resize(ref elementColors, System.Enum.GetValues(typeof(ElementType)).Length);
     }
 
     public void MapChange()
