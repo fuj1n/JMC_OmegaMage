@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class Mage : MonoBehaviour
 {
     public static Mage instance;
-    public const bool DEBUG = true;
+    public const bool DEBUG = false;
 
     [Header("Input")]
     /// <summary>
@@ -69,6 +69,7 @@ public class Mage : MonoBehaviour
     private List<MouseInfo> mouseInfoBuffer = new List<MouseInfo>();
 
     private string actionStartTag; // Mage, Ground or Enemy
+    private GameObject actionStartObject;
     private List<Element> selectedElements = new List<Element>();
 
     private bool walking = false;
@@ -281,7 +282,10 @@ public class Mage : MonoBehaviour
         if (!taggedParent)
             actionStartTag = "";
         else
+        {
+            actionStartObject = taggedParent;
             actionStartTag = taggedParent.tag;
+        }
     }
 
     private void MouseTap()
@@ -291,10 +295,14 @@ public class Mage : MonoBehaviour
         switch (actionStartTag)
         {
             case "Mage":
+                CastSpell("Self", SpellSelfParams.self);
                 break;
             case "Ground":
                 WalkTo(mouseInfoBuffer.LastOrDefault().position);
                 ShowTap(mouseInfoBuffer.LastOrDefault().position);
+                break;
+            case "Enemy":
+                CastSpell("Enemy", new SpellTargetParams() { source = transform.position, destination = actionStartObject.transform });
                 break;
         }
     }
@@ -344,9 +352,8 @@ public class Mage : MonoBehaviour
         {
             spell.Cast(parameters);
             elementCharge[element] = GetElementCharge(element) - spell.GetCost();
+            ClearElements();
         }
-
-        ClearElements();
     }
 
     private void OrbitSelectedElements()
@@ -549,9 +556,6 @@ public class Mage : MonoBehaviour
     /// <returns>The charge value of the given element</returns>
     public int GetElementCharge(ElementType element)
     {
-        if (element == ElementType.NONE)
-            return 1;
-
         if (!elementCharge.ContainsKey(element))
             elementCharge[element] = GetMaxElementCharge(element);
 
@@ -564,9 +568,6 @@ public class Mage : MonoBehaviour
     /// <returns>The maximum chage</returns>
     public int GetMaxElementCharge(ElementType element)
     {
-        if (element == ElementType.NONE)
-            return 1;
-
         if (!elementalMaxCharge.ContainsKey(element))
             elementalMaxCharge[element] = 100;
 

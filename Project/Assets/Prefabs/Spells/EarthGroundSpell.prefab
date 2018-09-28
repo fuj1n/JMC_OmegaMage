@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4840219958782002}
   - component: {fileID: 136382356641004206}
   - component: {fileID: 114468767947616806}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: EarthGroundSpell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 33083415155322242}
   - component: {fileID: 23356034215219344}
   - component: {fileID: 114953959117801156}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: spike
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 0
   cost: 50
-  duration: 4
+  duration: 5
   durationVariance: 0.5
   fadeAnimation: 0
   fadeTime: 1

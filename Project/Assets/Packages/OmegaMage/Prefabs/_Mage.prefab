@@ -777,6 +777,9 @@ MonoBehaviour:
   spells:
   - {fileID: 100000, guid: 781ba1de2521c59429972590439b7f42, type: 2}
   - {fileID: 1140085057974912, guid: 5b918956a661eeb498c2b9fd2019afb0, type: 2}
+  - {fileID: 1295828760850666, guid: 094fffa87756465489a223c7c824651d, type: 2}
+  - {fileID: 1238242845075370, guid: b23429baa0305fd4aa00950aa823e505, type: 2}
+  - {fileID: 1798717455455472, guid: 4309d801f2077d34faa241383f7f3189, type: 2}
   maxHealth: 4
   knockbackDistance: 1
   knockbackDuration: 0.5

@@ -182,11 +182,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 114868466967880242, guid: 06d786368719c4ecd931c5fc5fd9bd73,
-        type: 2}
-      propertyPath: spells.Array.size
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 400016, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -223,12 +218,6 @@ Prefab:
       propertyPath: m_Name
       value: Mage
       objectReference: {fileID: 0}
-    - target: {fileID: 114868466967880242, guid: 06d786368719c4ecd931c5fc5fd9bd73,
-        type: 2}
-      propertyPath: spells.Array.data[2]
-      value: 
-      objectReference: {fileID: 1295828760850666, guid: 094fffa87756465489a223c7c824651d,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
   m_IsPrefabAsset: 0
@@ -329,8 +318,15 @@ MonoBehaviour:
   tileTextures:
   - name: dirt
     texture: {fileID: 2800000, guid: f769ef7f94b744c1cb8a76a1b7244bab, type: 3}
+    ditherTex:
+    - {fileID: 2800000, guid: 754a326cdb3729141a61693c8565106f, type: 3}
+    - {fileID: 2800000, guid: bb855152d3084534a8fe9a975b7df3f4, type: 3}
+    - {fileID: 2800000, guid: 2ae9c6a53a221c246a32dcb9d2585aef, type: 3}
+    ditherChance: 0.1
   - name: stone
     texture: {fileID: 2800000, guid: 51913b142672e46bfb3c90299e5f38f4, type: 3}
+    ditherTex: []
+    ditherChance: 0.1
   portal: {fileID: 100000, guid: aa127d48e561348ed8c31db53e98ef53, type: 2}
   enemyTemplates:
   - type: EnemyBug

@@ -11,6 +11,8 @@ public class TileTexture
 {
     public string name;
     public Texture2D texture;
+    public Texture2D[] ditherTex;
+    public float ditherChance = 0.1F;
 }
 
 public class LayoutTiles : MonoBehaviour
@@ -56,7 +58,18 @@ public class LayoutTiles : MonoBehaviour
     /// <returns>Requested texture or null</returns>
     public Texture2D GetTileTexture(string name)
     {
-        return tileTextures.Where(x => x.name == name).Select(x => x.texture).FirstOrDefault();
+        TileTexture tt = tileTextures.Where(x => x.name == name).FirstOrDefault();
+        if (tt == null)
+            return null;
+
+        Texture2D texture = tt.texture;
+
+        if (tt.ditherTex != null && tt.ditherTex.Length > 0 && Random.value <= tt.ditherChance)
+        {
+            texture = tt.ditherTex[Random.Range(0, tt.ditherTex.Length)];
+        }
+
+        return texture;
     }
 
     /// <summary>

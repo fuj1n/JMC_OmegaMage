@@ -55,7 +55,8 @@ public class SpellGround : SpellBase
         IEnemy recepient = other.GetComponent<IEnemy>();
         if (recepient != null)
         {
-            recepient.TakeDamage(damagePerSecond, element, true);
+            if (damagePerSecond != 0F)
+                recepient.TakeDamage(damagePerSecond, element, true);
             if (hasKnockback)
             {
                 recepient.SetKnockback((recepient.transform.position - transform.position).normalized, knockbackDistance, knockbackDuration);

@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 198047712868709486}
   - component: {fileID: 114965396541070964}
   - component: {fileID: 199086736915116828}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AirGroundSpell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 2
   cost: 10
-  duration: 4
+  duration: 5
   durationVariance: 0.5
   fadeAnimation: 1
   fadeTime: 1
@@ -263,7 +263,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 0, g: 0.39853305, b: 0.5471698, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.078431375}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
