@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
@@ -17,7 +18,15 @@ public class Portal : MonoBehaviour
 
         if (go.tag != "Mage") return;
 
+        StartCoroutine(TeleportPlayer());
+    }
+
+    private IEnumerator TeleportPlayer()
+    {
+        yield return null;
+
         LayoutTiles.instance.BuildRoom(destinationRoom);
+        StopAllCoroutines();
     }
 
     private void OnTriggerExit(Collider other)

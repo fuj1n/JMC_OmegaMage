@@ -71,8 +71,9 @@ public class LayoutTiles : MonoBehaviour
             Destroy(t.gameObject);
         }
 
-        Mage.instance.transform.position = Vector3.left * 1000;
+        Mage.instance.transform.position = Vector3.left * 5;
         Mage.instance.ClearInput();
+        Mage.instance.MapChange();
 
         // Get the texture names for the floors and walls from <room> attributes
         string floorTexture = room.floor;
@@ -169,14 +170,26 @@ public class LayoutTiles : MonoBehaviour
             }
         }
 
-        portals.Where(portal => portal.destinationRoom == roomId).ToList().ForEach(portal =>
-        {
-            Mage.instance.StopWalking();
-            Mage.instance.transform.position = portal.transform.position + Vector3.back * .1F;
-            portal.justArrived = true;
-            firstRoom = false;
-        });
+        //portals.Where(portal => portal.destinationRoom == roomId).ToList().ForEach(portal =>
+        //{
+        //    Mage.instance.StopWalking();
+        //    Mage.instance.transform.position = portal.transform.position + Vector3.back * .1F;
+        //    portal.justArrived = true;
+        //    firstRoom = false;
+        //});
 
+        if (!firstRoom)
+            foreach (Portal portal in portals)
+            {
+                if (portal.destinationRoom == roomId)
+                {
+                    Mage.instance.StopWalking();
+                    Mage.instance.transform.position = portal.transform.position + Vector3.back * .1F;
+                    portal.justArrived = true;
+                }
+            }
+
+        firstRoom = false;
         roomId = roomsData.rooms.Where(kvp => kvp.Value == room).Single().Key;
     }
 

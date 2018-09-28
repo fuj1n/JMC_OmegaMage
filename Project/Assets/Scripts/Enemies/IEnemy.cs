@@ -19,4 +19,6 @@ public interface IEnemy
     /// Kills the entity
     /// </summary>
     void Die();
+
+    void SetKnockback(Vector3 knockbackDirection, float knockbackDistance, float knockbackDuration);
 }

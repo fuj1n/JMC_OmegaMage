@@ -44,7 +44,8 @@ public class Mage : MonoBehaviour
     public float lineMaxDelta = 0.5F;
     public float lineMaxLength = 8F;
 
-    public GameObject fireGroundSpell;
+    public GameObject[] spells = { };
+    private ISpell[] spellsInst;
 
     [Header("Health")]
     public float maxHealth = 4F;
@@ -56,7 +57,8 @@ public class Mage : MonoBehaviour
 
     private float health = 1F;
 
-    protected Transform spellAnchor;
+    [HideInInspector]
+    public Transform spellAnchor;
 
     private float totalLineLength;
     private List<Vector3> linePoints = new List<Vector3>();
@@ -82,7 +84,8 @@ public class Mage : MonoBehaviour
     private float knockbackTime;
 
     private HashSet<ElementType> unlockedElements = new HashSet<ElementType>() { ElementType.NONE };
-    private Dictionary<ElementType, float> elementCharge = new Dictionary<ElementType, float>();
+    private Dictionary<ElementType, int> elementCharge = new Dictionary<ElementType, int>();
+    private Dictionary<ElementType, int> elementalMaxCharge = new Dictionary<ElementType, int>();
 
     private void Awake()
     {
@@ -115,6 +118,9 @@ public class Mage : MonoBehaviour
 
         // Unlock all the elements for now
         System.Enum.GetValues(typeof(ElementType)).Cast<ElementType>().ToList().ForEach(e => UnlockElement(e));
+
+
+        spellsInst = spells.Select(s => s.GetComponent<ISpell>()).ToArray();
     }
 
     private void Update()
@@ -318,25 +324,26 @@ public class Mage : MonoBehaviour
             StopWalking();
         else
         {
-            CastGroundSpell();
+            Vector3[] positions = new Vector3[lineRender.positionCount];
+            lineRender.GetPositions(positions);
+            CastSpell("Ground", new SpellGroundParams() { positions = positions });
             ClearLineRender();
         }
     }
 
-    private void CastGroundSpell()
+    private void CastSpell(string type, ISpellParams parameters)
     {
-        if (selectedElements.Count == 0)
-            return;
+        ElementType element = ElementType.NONE;
 
-        switch (selectedElements.First().type)
+        if (selectedElements.Count >= 1)
+            element = selectedElements.First().type;
+
+        ISpell spell = spellsInst.Where(s => s.GetElement() == element && type.Equals(s.GetTargetType()) && GetElementCharge(element) >= s.GetCost()).FirstOrDefault();
+
+        if (spell != null)
         {
-            case ElementType.FIRE:
-                foreach (Vector3 point in linePoints)
-                {
-                    Instantiate(fireGroundSpell, point, Quaternion.identity, spellAnchor);
-                }
-                break;
-                //TODO: elements
+            spell.Cast(parameters);
+            elementCharge[element] = GetElementCharge(element) - spell.GetCost();
         }
 
         ClearElements();
@@ -474,9 +481,6 @@ public class Mage : MonoBehaviour
     /// </summary>
     public void SelectElement(ElementType element)
     {
-        if (!IsUnlockedElement(element) || GetElementCharge(element) < 1F)
-            return;
-
         this.ConditionalLog(DEBUG, "Select element: {0}", element);
 
         if (selectedElements.Select(e => e.type).Contains(element))
@@ -487,6 +491,9 @@ public class Mage : MonoBehaviour
             ClearElements();
             return;
         }
+
+        if (!IsUnlockedElement(element) || !spellsInst.Any(s => s.GetElement() == element && GetElementCharge(element) >= s.GetCost()))
+            return;
 
         if (maxNumSelectedElements == 1)
             ClearElements();
@@ -524,21 +531,68 @@ public class Mage : MonoBehaviour
     public void UnlockElement(ElementType element)
     {
         unlockedElements.Add(element);
-        elementCharge[element] = 1F;
+        elementCharge[element] = GetMaxElementCharge(element);
     }
 
     /// <summary>
     /// Gets the charge of the given <paramref name="element"/>
     /// </summary>
     /// <returns>The charge percentage of the given element</returns>
-    public float GetElementCharge(ElementType element)
+    public float GetElementChargeAsPercent(ElementType element)
+    {
+        return 1F * GetElementCharge(element) / GetMaxElementCharge(element);
+    }
+
+    /// <summary>
+    /// Gets the charge of the given <paramref name="element"/>
+    /// </summary>
+    /// <returns>The charge value of the given element</returns>
+    public int GetElementCharge(ElementType element)
     {
         if (element == ElementType.NONE)
-            return 1F;
+            return 1;
 
-        return elementCharge.SingleOrDefault(x => x.Key == element).Value;
+        if (!elementCharge.ContainsKey(element))
+            elementCharge[element] = GetMaxElementCharge(element);
+
+        return elementCharge[element];
+    }
+
+    /// <summary>
+    /// Gets the maximum chage of the given <paramref name="element"/>
+    /// </summary>
+    /// <returns>The maximum chage</returns>
+    public int GetMaxElementCharge(ElementType element)
+    {
+        if (element == ElementType.NONE)
+            return 1;
+
+        if (!elementalMaxCharge.ContainsKey(element))
+            elementalMaxCharge[element] = 100;
+
+        return elementalMaxCharge[element];
     }
     #endregion
+
+    private void OnValidate()
+    {
+        for (int i = 0; i < spells.Length; i++)
+        {
+            if (spells[i] && spells[i].GetComponent<ISpell>() == null)
+            {
+                spells[i] = null;
+                Debug.LogError("Cannot assign spell that does not implement ISpell");
+            }
+        }
+    }
+
+    public void MapChange()
+    {
+        foreach (Transform t in spellAnchor)
+        {
+            Destroy(t.gameObject);
+        }
+    }
 }
 
 /// <summary>

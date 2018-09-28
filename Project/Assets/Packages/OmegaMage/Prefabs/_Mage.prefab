@@ -774,12 +774,15 @@ MonoBehaviour:
   lineMinDelta: 0.1
   lineMaxDelta: 0.5
   lineMaxLength: 8
-  fireGroundSpell: {fileID: 100000, guid: 1bddc976e84cc4c52b55874a26454b75, type: 2}
+  spells:
+  - {fileID: 100000, guid: 781ba1de2521c59429972590439b7f42, type: 2}
+  - {fileID: 1140085057974912, guid: 5b918956a661eeb498c2b9fd2019afb0, type: 2}
   maxHealth: 4
   knockbackDistance: 1
   knockbackDuration: 0.5
   invincibilityDuration: 0.5
   invincibilityBlinkCount: 3
+  spellAnchor: {fileID: 0}
 --- !u!120 &120033175948105762
 LineRenderer:
   m_ObjectHideFlags: 1

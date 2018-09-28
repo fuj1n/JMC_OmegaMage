@@ -23,7 +23,7 @@ public class ElementSelectorComponent : MonoBehaviour, IPointerClickHandler
         if (!isUnlocked)
             return;
 
-        fillBar.fillAmount = Mage.instance.GetElementCharge(element);
+        fillBar.fillAmount = Mage.instance.GetElementChargeAsPercent(element);
     }
 
     public void OnPointerClick(PointerEventData eventData)

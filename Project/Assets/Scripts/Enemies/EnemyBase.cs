@@ -8,15 +8,40 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public float damage;
     public float maxHealth;
 
+    protected new Rigidbody rigidbody
+    {
+        get
+        {
+            if (rigidbody_value == null)
+                rigidbody_value = GetComponent<Rigidbody>();
+
+            return rigidbody_value;
+        }
+    }
+    private Rigidbody rigidbody_value;
     private float health = 1F;
 
     private Dictionary<ElementType, float> damageSources = new Dictionary<ElementType, float>();
     private Tween damageTween;
 
+    private Vector3 knockbackDirection;
+    private float knockbackDistance;
+    private float knockbackDuration;
+
+    private float knockbackTime;
+
     public abstract void DoAI();
 
     private void FixedUpdate()
     {
+        if (knockbackTime > 0F)
+        {
+            rigidbody.velocity = knockbackDirection * (knockbackDistance / knockbackDuration);
+            knockbackTime -= Time.fixedDeltaTime;
+
+            return;
+        }
+
         DoAI();
     }
 
@@ -84,5 +109,13 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public void Die()
     {
         Destroy(gameObject);
+    }
+
+    public void SetKnockback(Vector3 knockbackDirection, float knockbackDistance, float knockbackDuration)
+    {
+        this.knockbackDirection = knockbackDirection;
+        this.knockbackDistance = knockbackDistance;
+        this.knockbackDuration = knockbackDuration;
+        knockbackTime = knockbackDuration;
     }
 }
