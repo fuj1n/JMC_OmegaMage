@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CameraFollow : PT_MonoBehaviour
+public class CameraFollow : MonoBehaviour
 {
     public static CameraFollow instance;
 
@@ -16,12 +16,12 @@ public class CameraFollow : PT_MonoBehaviour
     private void Start()
     {
         // Set starting position so we don't ease at the very start
-        pos = target.position + followOffset;
+        transform.position = target.position + followOffset;
     }
 
     private void FixedUpdate()
     {
         Vector3 newPos = target.position + followOffset;
-        pos = Vector3.Lerp(pos, newPos, camEasing);
+        transform.position = Vector3.Lerp(transform.position, newPos, camEasing);
     }
 }

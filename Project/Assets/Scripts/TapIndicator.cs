@@ -1,36 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using DG.Tweening;
 using UnityEngine;
 
-public class TapIndicator : PT_Mover
+public class TapIndicator : MonoBehaviour
 {
     public float lifeTime = 0.4f;
     public float[] scales;
     public Color[] colors;
 
+    private Material renderMaterial;
+
     private void Awake()
     {
-        scale = Vector3.zero;
+        transform.localScale = Vector3.zero;
+
+        renderMaterial = GetComponent<Renderer>().material;
+        GetComponent<Renderer>().material = renderMaterial;
     }
 
     private void Start()
     {
-        List<PT_Loc> locs = new List<PT_Loc>();
-
-        Vector3 pos = transform.position;
-        pos.z = -0.1f;
-        //transform.position = pos;
+        Sequence scaleSequence = DOTween.Sequence();
+        Sequence colorSequence = DOTween.Sequence().OnComplete(() => Destroy(gameObject));
 
         for (int i = 0; i < scales.Length; i++)
         {
-            PT_Loc loc = new PT_Loc();
-            loc.scale = Vector3.one * scales[i];
-            loc.pos = pos;
-            loc.color = colors[i];
-            locs.Add(loc);
+            scaleSequence.Append(transform.DOScale(scales[i], lifeTime / scales.Length));
         }
 
-        callback = () => Destroy(gameObject);
+        for (int i = 0; i < colors.Length; i++)
+        {
+            colorSequence.Append(renderMaterial.DOColor(colors[i], lifeTime / colors.Length));
+        }
+    }
 
-        PT_StartMove(locs, lifeTime);
+    private void Update()
+    {
+        Debug.Log(renderMaterial.color.a);
     }
 }

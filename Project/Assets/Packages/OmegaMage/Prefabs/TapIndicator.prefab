@@ -95,19 +95,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f89b72dcab312147abcbf7d6d617a98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ptm_locs: []
-  ptm_start: 0
-  ptm_duration: 0
-  ptm_state: 0
-  ptm_easing: ',InOut|'
-  ptm_u: 0
-  ptm_u2: 0
   lifeTime: 0.4
   scales:
   - 0
-  - 0.8
-  - 0.4
+  - 0.5
+  - 0.3
   colors:
+  - {r: 1, g: 1, b: 1, a: 0.3137255}
   - {r: 1, g: 1, b: 1, a: 0.54901963}
-  - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 0}
