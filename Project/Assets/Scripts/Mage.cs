@@ -56,8 +56,6 @@ public class Mage : MonoBehaviour
 
     private float health = 1F;
 
-    // public bool _______________; // ???
-
     protected Transform spellAnchor;
 
     private float totalLineLength;

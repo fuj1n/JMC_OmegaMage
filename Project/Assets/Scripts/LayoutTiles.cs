@@ -26,8 +26,6 @@ public class LayoutTiles : MonoBehaviour
 
     public GameObject portal;
 
-    //public bool _____________; // ???
-
     public TypeTemplatePair[] enemyTemplates = { };
 
     private Tile[,] tiles;
@@ -152,7 +150,7 @@ public class LayoutTiles : MonoBehaviour
                         if (roomsData.portals.Contains(rawType))
                         {
                             // Create portal
-                            GameObject gop = Instantiate(this.portal, tile.position, Quaternion.identity, tileAnchor);
+                            GameObject gop = Instantiate(this.portal, tile.position, this.portal.transform.rotation, tileAnchor);
                             Portal portal = gop.GetComponent<Portal>();
                             portal.destinationRoom = rawType;
                             portals.Add(portal);
@@ -172,16 +170,13 @@ public class LayoutTiles : MonoBehaviour
             }
         }
 
-        foreach (Portal portal in portals)
+        portals.Where(portal => portal.destinationRoom == roomId).ToList().ForEach(portal =>
         {
-            if (portal.destinationRoom == roomId)
-            {
-                Mage.instance.StopWalking();
-                Mage.instance.transform.position = portal.transform.position + Vector3.back * .1F;
-                portal.justArrived = true;
-                firstRoom = false;
-            }
-        }
+            Mage.instance.StopWalking();
+            Mage.instance.transform.position = portal.transform.position + Vector3.back * .1F;
+            portal.justArrived = true;
+            firstRoom = false;
+        });
 
         roomId = roomsData.rooms.Where(kvp => kvp.Value == room).Single().Key;
     }

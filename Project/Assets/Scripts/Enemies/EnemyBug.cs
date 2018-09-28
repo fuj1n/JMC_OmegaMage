@@ -5,8 +5,6 @@ public class EnemyBug : EnemyBase
 {
     public float speed = 0.5F;
 
-    // public bool ____________________; // ??? Why do these exist?
-
     private Vector3 walkTarget;
     private bool walking;
     private Transform character;
