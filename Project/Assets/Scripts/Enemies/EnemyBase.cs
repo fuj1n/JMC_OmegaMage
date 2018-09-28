@@ -30,6 +30,8 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 
     private float knockbackTime;
 
+    private List<Transform> immobilizationAgents = new List<Transform>();
+
     public abstract void DoAI();
 
     private void FixedUpdate()
@@ -42,7 +44,11 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
             return;
         }
 
-        DoAI();
+        if (immobilizationAgents.Count != 0)
+            immobilizationAgents = immobilizationAgents.Where(a => a).Distinct().ToList();
+
+        if (immobilizationAgents.Count == 0)
+            DoAI();
     }
 
     private void LateUpdate()
@@ -118,4 +124,12 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
         this.knockbackDuration = knockbackDuration;
         knockbackTime = knockbackDuration;
     }
+
+    public virtual void AddImmobilizedAgent(Transform agent)
+    {
+        immobilizationAgents.Add(agent);
+        OnImmobilized();
+    }
+
+    public virtual void OnImmobilized() { }
 }

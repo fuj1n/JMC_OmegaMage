@@ -18,6 +18,12 @@ public class SpellProjectile : SpellBase
 
     private void Update()
     {
+        if (!target)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         if (maxAliveTime > 0F && aliveTime >= maxAliveTime)
             Destroy(gameObject);
         aliveTime += Time.deltaTime;

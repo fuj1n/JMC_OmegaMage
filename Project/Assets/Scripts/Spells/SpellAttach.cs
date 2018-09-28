@@ -11,6 +11,8 @@ public class SpellAttach : SpellBase
     [ConditionalHide(true, ConditionalSourceField = "fadeAnimation")]
     public float fadeTime = 1F;
 
+    public bool immobilizeEnemy = false;
+
     private float startTime;
 
     private Transform target;
@@ -23,6 +25,12 @@ public class SpellAttach : SpellBase
 
     private void Update()
     {
+        if (!target)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         transform.position = target.position;
 
         float elapsed = Mathf.Clamp01((Time.time - startTime) / duration);
@@ -62,7 +70,15 @@ public class SpellAttach : SpellBase
     {
         SpellTargetParams targetParams = (SpellTargetParams)parameters;
 
-        Instantiate(gameObject).GetComponent<SpellAttach>().target = targetParams.destination;
+        Transform t = Instantiate(gameObject).transform;
+        t.GetComponent<SpellAttach>().target = targetParams.destination;
+
+        if (immobilizeEnemy)
+        {
+            IEnemy enemy = targetParams.destination.GetComponent<IEnemy>();
+            if (enemy != null)
+                enemy.AddImmobilizedAgent(t);
+        }
     }
 
     public override string GetTargetType() => "Enemy";

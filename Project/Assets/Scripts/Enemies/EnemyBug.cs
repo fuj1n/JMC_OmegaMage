@@ -79,4 +79,11 @@ public class EnemyBug : EnemyBase
     {
         return element != ElementType.AIR;
     }
+
+    public override void OnImmobilized()
+    {
+        base.OnImmobilized();
+
+        StopWalking();
+    }
 }

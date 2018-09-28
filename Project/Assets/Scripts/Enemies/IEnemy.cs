@@ -20,5 +20,16 @@ public interface IEnemy
     /// </summary>
     void Die();
 
+    /// <summary>
+    /// Sets the enemy to be knocked back
+    /// </summary>
+    /// <param name="knockbackDirection">The direction to knock the enemy</param>
+    /// <param name="knockbackDistance">The distance to knock the enemy</param>
+    /// <param name="knockbackDuration">How long to knock the enemy for</param>
     void SetKnockback(Vector3 knockbackDirection, float knockbackDistance, float knockbackDuration);
+
+    /// <summary>
+    /// Adds an <paramref name="agent"/> preventing this object from moving
+    /// </summary>
+    void AddImmobilizedAgent(Transform agent);
 }
