@@ -3,7 +3,9 @@
     void Cast(ISpellParams parameters);
     ElementType GetElement();
     int GetCost();
-    string GetTargetType();
+    SpellTargetType GetTargetType();
+
+    string GetSpellDescription();
 }
 
 public interface ISpellParams { }

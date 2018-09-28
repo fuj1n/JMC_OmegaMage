@@ -85,6 +85,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 2
   cost: 100000
+  description: Summons whirlwind along the line that lasts 5 seconds and deals 5 dps
+    to targets caught within
   duration: 5
   durationVariance: 0.5
   fadeAnimation: 1

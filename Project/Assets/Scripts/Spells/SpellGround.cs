@@ -72,7 +72,7 @@ public class SpellGround : SpellBase
         }
     }
 
-    public override string GetTargetType() => "Ground";
+    public override SpellTargetType GetTargetType() => SpellTargetType.GROUND;
 }
 
 public struct SpellGroundParams : ISpellParams

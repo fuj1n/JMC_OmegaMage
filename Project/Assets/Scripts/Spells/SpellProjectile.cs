@@ -57,7 +57,7 @@ public class SpellProjectile : SpellBase
         Instantiate(gameObject, projectileParameters.source + Vector3.back * .6F, gameObject.transform.rotation, Mage.instance.spellAnchor).GetComponent<SpellProjectile>().target = projectileParameters.destination;
     }
 
-    public override string GetTargetType() => "Enemy";
+    public override SpellTargetType GetTargetType() => SpellTargetType.ENEMY;
 }
 
 public struct SpellTargetParams : ISpellParams

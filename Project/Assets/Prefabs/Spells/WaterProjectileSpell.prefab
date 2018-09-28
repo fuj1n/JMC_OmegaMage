@@ -101,6 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 1
   cost: 100000
+  description: Summons a bolt of water that moves at 5 units per second dealing 5
+    damage to the target
   damage: 5
   speed: 5
   maxAliveTime: 5

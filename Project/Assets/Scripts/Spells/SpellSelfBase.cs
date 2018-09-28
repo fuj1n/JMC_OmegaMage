@@ -1,6 +1,6 @@
 ﻿public abstract class SpellSelfBase : SpellBase
 {
-    public override string GetTargetType() => "Self";
+    public override SpellTargetType GetTargetType() => SpellTargetType.SELF;
 }
 
 public struct SpellSelfParams : ISpellParams

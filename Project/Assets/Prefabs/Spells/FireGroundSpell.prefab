@@ -4643,6 +4643,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 3
   cost: 250000
+  description: Summons flames along the line for 4 seconds dealing 15 dps to those
+    caught up in it
   duration: 4
   durationVariance: 0.5
   fadeAnimation: 1

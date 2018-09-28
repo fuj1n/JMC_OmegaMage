@@ -243,6 +243,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 4
   cost: 1000000
+  description: Casts an arrow that moves at 3 units per second, dealing 2 damage to
+    the targeted foe
   damage: 2
   speed: 3
   maxAliveTime: 5

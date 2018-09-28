@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -46,7 +47,7 @@ public class Mage : MonoBehaviour
     public float lineMaxLength = 8F;
 
     public GameObject[] spells = { };
-    private ISpell[] spellsInst;
+    private Dictionary<ElementType, Dictionary<SpellTargetType, ISpell>> spellCache = new Dictionary<ElementType, Dictionary<SpellTargetType, ISpell>>();
 
     [Header("Health")]
     public float maxHealth = 4F;
@@ -121,7 +122,14 @@ public class Mage : MonoBehaviour
         // Unlock all the elements for now
         System.Enum.GetValues(typeof(ElementType)).Cast<ElementType>().ToList().ForEach(e => UnlockElement(e));
 
-        spellsInst = spells.Select(s => s.GetComponent<ISpell>()).ToArray();
+        foreach (ISpell spell in spells.Select(s => s.GetComponent<ISpell>()))
+        {
+            ElementType element = spell.GetElement();
+            if (!spellCache.ContainsKey(element))
+                spellCache.Add(element, new Dictionary<SpellTargetType, ISpell>());
+
+            spellCache[element][spell.GetTargetType()] = spell;
+        }
     }
 
     private void Update()
@@ -300,14 +308,18 @@ public class Mage : MonoBehaviour
         switch (actionStartTag)
         {
             case "Mage":
-                CastSpell("Self", SpellSelfParams.self);
-                break;
+                if (GetSelectedElement() != ElementType.NONE)
+                {
+                    CastSpell(SpellTargetType.SELF, SpellSelfParams.self);
+                    break;
+                }
+                goto case "Ground";
             case "Ground":
                 WalkTo(mouseInfoBuffer.LastOrDefault().position);
                 ShowTap(mouseInfoBuffer.LastOrDefault().position);
                 break;
             case "Enemy":
-                CastSpell("Enemy", new SpellTargetParams() { source = transform.position, destination = actionStartObject.transform });
+                CastSpell(SpellTargetType.ENEMY, new SpellTargetParams() { source = transform.position, destination = actionStartObject.transform });
                 break;
         }
     }
@@ -316,7 +328,7 @@ public class Mage : MonoBehaviour
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDrag()");
 
-        if (actionStartTag != "Ground")
+        if (actionStartTag != "Ground" && GetSelectedElement() != ElementType.NONE)
             return;
 
         if (selectedElements.Count == 0)
@@ -339,19 +351,33 @@ public class Mage : MonoBehaviour
         {
             Vector3[] positions = new Vector3[lineRender.positionCount];
             lineRender.GetPositions(positions);
-            CastSpell("Ground", new SpellGroundParams() { positions = positions });
+            CastSpell(SpellTargetType.GROUND, new SpellGroundParams() { positions = positions });
             ClearLineRender();
         }
     }
 
-    private void CastSpell(string type, ISpellParams parameters)
+    [NotNull]
+    public Dictionary<SpellTargetType, ISpell> FindSpells(ElementType element)
     {
-        ElementType element = ElementType.NONE;
+        if (!spellCache.ContainsKey(element))
+            return new Dictionary<SpellTargetType, ISpell>();
 
-        if (selectedElements.Count >= 1)
-            element = selectedElements.First().type;
+        return spellCache[element];
+    }
 
-        ISpell spell = spellsInst.Where(s => s.GetElement() == element && type.Equals(s.GetTargetType()) && GetElementCharge(element) >= s.GetCost()).FirstOrDefault();
+    public ISpell FindSpell(ElementType element, SpellTargetType type)
+    {
+        if (!spellCache.ContainsKey(element) || !spellCache[element].ContainsKey(type))
+            return null;
+
+        return spellCache[element][type];
+    }
+
+    private void CastSpell(SpellTargetType type, ISpellParams parameters)
+    {
+        ElementType element = GetSelectedElement();
+
+        ISpell spell = FindSpell(element, type);
 
         if (spell != null)
         {
@@ -424,7 +450,7 @@ public class Mage : MonoBehaviour
 
     private void UpdateLineRender()
     {
-        int element = (int)selectedElements[0].type;
+        int element = (int)GetSelectedElement();
 
         lineRender.startColor = elementColors[element];
         lineRender.endColor = lineRender.startColor;
@@ -504,7 +530,7 @@ public class Mage : MonoBehaviour
             return;
         }
 
-        if (!IsUnlockedElement(element) || !spellsInst.Any(s => s.GetElement() == element && GetElementCharge(element) >= s.GetCost()))
+        if (!IsUnlockedElement(element) || !FindSpells(element).Any(s => GetElementCharge(element) >= s.Value.GetCost()))
             return;
 
         if (maxNumSelectedElements == 1)
@@ -517,6 +543,17 @@ public class Mage : MonoBehaviour
         Element el = go.GetComponent<Element>();
 
         selectedElements.Add(el);
+    }
+
+    /// <summary>
+    /// Gets the selected element
+    /// </summary>
+    public ElementType GetSelectedElement()
+    {
+        if (selectedElements.Count == 0)
+            return ElementType.NONE;
+
+        return selectedElements.Single().type;
     }
 
     /// <summary>
@@ -631,6 +668,13 @@ public enum ElementType
     AIR,
     FIRE,
     NONE
+}
+
+public enum SpellTargetType
+{
+    SELF,
+    GROUND,
+    ENEMY
 }
 
 /// <summary>

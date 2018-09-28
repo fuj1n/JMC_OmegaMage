@@ -94,11 +94,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 3
   cost: 500000
+  description: Sets the enemy on fire dealing 5 dps for 4 seconds
   damagePerSecond: 5
   duration: 4
   durationVariance: 0.5
   fadeAnimation: 1
   fadeTime: 1
+  immobilizeEnemy: 0
 --- !u!136 &136614440560670420
 CapsuleCollider:
   m_ObjectHideFlags: 1

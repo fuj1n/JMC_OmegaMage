@@ -126,7 +126,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 0
-  cost: 25
+  cost: 250000
+  description: Summons rocks at foes's feet preventing them from moving for 5 seconds
   damagePerSecond: 0
   duration: 5
   durationVariance: 0.5

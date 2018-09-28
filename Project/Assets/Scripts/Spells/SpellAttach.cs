@@ -81,5 +81,5 @@ public class SpellAttach : SpellBase
         }
     }
 
-    public override string GetTargetType() => "Enemy";
+    public override SpellTargetType GetTargetType() => SpellTargetType.ENEMY;
 }
