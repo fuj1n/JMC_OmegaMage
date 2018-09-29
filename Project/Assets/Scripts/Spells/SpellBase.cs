@@ -7,7 +7,7 @@ public abstract class SpellBase : MonoBehaviour, ISpell
 
     public string description = "";
 
-    public abstract void Cast(ISpellParams parameters);
+    public abstract bool Cast(ISpellParams parameters);
 
     public int GetCost() => cost;
     public ElementType GetElement() => element;

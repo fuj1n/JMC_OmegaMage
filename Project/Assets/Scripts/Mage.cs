@@ -90,6 +90,11 @@ public class Mage : MonoBehaviour
     private Dictionary<ElementType, int> elementCharge = new Dictionary<ElementType, int>();
     private Dictionary<ElementType, int> elementMaxCharge = new Dictionary<ElementType, int>();
 
+    private Transform isInvincibleController;
+    private Transform thornsController;
+    private float thornsMultiplier;
+    private ElementType thornsType;
+
     private void Awake()
     {
         instance = this;
@@ -228,39 +233,55 @@ public class Mage : MonoBehaviour
         {
             StopWalking();
         }
-
-        IEnemy enemy = source.GetComponent<IEnemy>();
-
-        if (enemy != null)
-            CollisionDamage(enemy);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionStay(Collision collision)
+    {
+        OnTriggerStay(collision.collider);
+    }
+
+    private void OnTriggerStay(Collider other)
     {
         IEnemy enemy = other.GetComponent<IEnemy>();
         if (enemy != null)
             CollisionDamage(enemy);
     }
 
+    #region Health
     private void CollisionDamage(IEnemy enemy)
     {
-        if (invincibilitySequence.IsPlaying())
+        if (isInvincibleController || invincibilitySequence.IsPlaying())
             return;
 
         StopWalking();
         ClearInput();
 
-        health -= enemy.GetDamage() / maxHealth;
+        knockbackTime = knockbackDuration;
+        knockbackDirection = (transform.position - enemy.transform.position).normalized;
+
+        float damage = enemy.GetDamage();
+        if (thornsController)
+        {
+            enemy.TakeDamage(damage * thornsMultiplier, thornsType, false);
+            enemy.SetKnockback(knockbackDirection * -1, knockbackDistance * thornsMultiplier, knockbackDuration);
+            damage -= damage * thornsMultiplier;
+        }
+
+        health -= damage / maxHealth;
+
+
         if (health <= 0F)
         {
             Die(); // 死ね
             return;
         }
 
-        knockbackTime = knockbackDuration;
-        knockbackDirection = (transform.position - enemy.transform.position).normalized;
-
         invincibilitySequence.Restart();
+    }
+
+    public void Heal(float amount)
+    {
+        health = Mathf.Clamp01(health + amount / maxHealth);
     }
 
     public float GetHealth()
@@ -268,11 +289,24 @@ public class Mage : MonoBehaviour
         return health;
     }
 
+    public void SetInvincible(Transform controller)
+    {
+        isInvincibleController = controller;
+    }
+
+    public void SetThorns(float multiplier, ElementType type, Transform controller)
+    {
+        thornsMultiplier = multiplier;
+        thornsType = type;
+        thornsController = controller;
+    }
+
     private void Die()
     {
         DOTween.KillAll();
         SceneManager.LoadScene(0);
     }
+    #endregion
 
     private MouseInfo AddMouseInfo()
     {
@@ -384,11 +418,13 @@ public class Mage : MonoBehaviour
 
         ISpell spell = FindSpell(element, type);
 
-        if (spell != null)
+        if (spell != null && GetElementCharge(element) >= spell.GetCost())
         {
-            spell.Cast(parameters);
-            elementCharge[element] = GetElementCharge(element) - spell.GetCost();
-            ClearElements();
+            if (spell.Cast(parameters))
+            {
+                elementCharge[element] = GetElementCharge(element) - spell.GetCost();
+                ClearElements();
+            }
         }
     }
 

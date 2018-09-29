@@ -62,7 +62,7 @@ public class SpellGround : SpellBase
         }
     }
 
-    public override void Cast(ISpellParams parameters)
+    public override bool Cast(ISpellParams parameters)
     {
         SpellGroundParams groundParams = (SpellGroundParams)parameters;
 
@@ -70,6 +70,8 @@ public class SpellGround : SpellBase
         {
             Instantiate(gameObject, point, gameObject.transform.rotation, Mage.instance.spellAnchor);
         }
+
+        return true;
     }
 
     public override SpellTargetType GetTargetType() => SpellTargetType.GROUND;

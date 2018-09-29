@@ -14,7 +14,7 @@ public class HealthController : MonoBehaviour
 
     private void Update()
     {
-        fill.fillAmount = Mage.instance.GetHealth();
+        fill.fillAmount = Mathf.Lerp(fill.fillAmount, Mage.instance.GetHealth(), Time.deltaTime * 4);
         text.text = System.Math.Round(Mage.instance.GetHealth() * Mage.instance.maxHealth, 2) + "/" + Mage.instance.maxHealth;
     }
 

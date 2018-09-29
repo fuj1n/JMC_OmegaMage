@@ -982,6 +982,51 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114493081770559114, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114017362829237214, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665729792702238, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114017362829237214, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_fontSize
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114493081770559114, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_fontSize
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665729792702238, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_fontSize
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114493081770559114, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_fontSizeMax
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114017362829237214, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_fontSizeMax
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114665729792702238, guid: 98d201d36484d8342bbc635487f58e50,
+        type: 2}
+      propertyPath: m_fontSizeMax
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 98d201d36484d8342bbc635487f58e50, type: 2}
   m_IsPrefabAsset: 0

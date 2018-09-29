@@ -51,10 +51,12 @@ public class SpellProjectile : SpellBase
         }
     }
 
-    public override void Cast(ISpellParams parameters)
+    public override bool Cast(ISpellParams parameters)
     {
         SpellTargetParams projectileParameters = (SpellTargetParams)parameters;
         Instantiate(gameObject, projectileParameters.source + Vector3.back * .6F, gameObject.transform.rotation, Mage.instance.spellAnchor).GetComponent<SpellProjectile>().target = projectileParameters.destination;
+
+        return true;
     }
 
     public override SpellTargetType GetTargetType() => SpellTargetType.ENEMY;

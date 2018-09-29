@@ -1,6 +1,6 @@
 ﻿public interface ISpell
 {
-    void Cast(ISpellParams parameters);
+    bool Cast(ISpellParams parameters);
     ElementType GetElement();
     int GetCost();
     SpellTargetType GetTargetType();

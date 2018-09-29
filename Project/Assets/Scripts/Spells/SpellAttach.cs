@@ -66,7 +66,7 @@ public class SpellAttach : SpellBase
         }
     }
 
-    public override void Cast(ISpellParams parameters)
+    public override bool Cast(ISpellParams parameters)
     {
         SpellTargetParams targetParams = (SpellTargetParams)parameters;
 
@@ -79,6 +79,8 @@ public class SpellAttach : SpellBase
             if (enemy != null)
                 enemy.AddImmobilizedAgent(t);
         }
+
+        return true;
     }
 
     public override SpellTargetType GetTargetType() => SpellTargetType.ENEMY;
