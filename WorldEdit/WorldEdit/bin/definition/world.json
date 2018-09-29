@@ -1,0 +1,38 @@
+{
+	"portal": "portal.png",
+	"keys": {
+		" ": "$blank",
+		".": "dirt.png",
+		"|": "stone.png",
+		"-": "invisible.png",
+		"b": "bug.png",
+		"<": "spiker.png",
+		">": "spiker.png",
+		"^": "spiker.png",
+		"v": "spiker.png",
+		"k": "key.png",
+		"f": "fire.png",
+		"e": "earth.png",
+		"a": "air.png",
+		"w": "water.png",
+		"X": "mage.png"
+	},
+	"background": "bg.png",
+	"labels": {
+		" ": "blank",
+		".": "ground",
+		"|": "wall",
+		"-": "invisible wall",
+		"b": "bug",
+		"<": "L Spiker",
+		">": "R Spiker",
+		"^": "U Spiker",
+		"v": "D Spiker",
+		"k": "Key",
+		"f": "Fire Unlock",
+		"e": "Earth Unlock",
+		"a": "Air Unlock",
+		"w": "Water Unlock",
+		"X": "Spawn"
+	}
+}
