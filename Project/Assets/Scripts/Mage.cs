@@ -304,7 +304,7 @@ public class Mage : MonoBehaviour
     private void Die()
     {
         DOTween.KillAll();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("GameOver");
     }
     #endregion
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[EnemyFactory('b')]
+[EntityFactoryAttribute('b')]
 public class EnemyBug : EnemyBase
 {
     public float speed = 0.5F;

@@ -7,6 +7,11 @@ public class Portal : MonoBehaviour
     [HideInInspector]
     public bool justArrived = false;
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        OnTriggerEnter(collision.collider);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (justArrived)
@@ -18,6 +23,11 @@ public class Portal : MonoBehaviour
 
         if (go.tag != "Mage") return;
 
+        OnPortalEntered();
+    }
+
+    protected virtual void OnPortalEntered()
+    {
         StartCoroutine(TeleportPlayer());
     }
 

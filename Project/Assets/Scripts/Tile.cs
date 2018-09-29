@@ -4,15 +4,26 @@ public class Tile : MonoBehaviour
 {
     public char type;
 
+    public string startTexture = "";
+
     private string texture_val;
     private int height_val = 0;
     private Vector3 position_val;
 
     private new Renderer renderer;
+    private Material defaultMaterial;
 
     private void Awake()
     {
         renderer = GetComponent<Renderer>();
+        defaultMaterial = renderer.material;
+    }
+
+    private void Start()
+    {
+        // Done on first update so that we are 
+        if (!string.IsNullOrWhiteSpace(startTexture))
+            texture = startTexture;
     }
 
     /// <summary>
@@ -44,12 +55,14 @@ public class Tile : MonoBehaviour
         {
             texture_val = value;
             name = "TilePrefab_" + texture_val; // Sets teh name of this gameobject
+
+            Material customMaterial = LayoutTiles.instance.GetTileCustomMaterial(texture_val);
+            renderer.material = customMaterial ? customMaterial : defaultMaterial;
+
             Texture2D t2D = LayoutTiles.instance.GetTileTexture(texture_val);
-            if (t2D == null)
-            {
-                Utils.tr("ERROR", "Tile.type{set}=", value, "No matching Texture2D in LayoutTiles.S.tileTextures!");
-            }
-            else
+            if (!t2D && !customMaterial)
+                Utils.tr("ERROR", "Tile.type{set}=", value, "No matching Texture2D in LayoutTiles.tileTextures!");
+            else if (t2D)
             {
                 renderer.material.mainTexture = t2D;
             }

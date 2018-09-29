@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
 
-public interface IEnemy
+public interface IEnemy : IEntity
 {
-    GameObject gameObject { get; }
-    Transform transform { get; }
-
     float GetDamage();
     void DoAI();
 

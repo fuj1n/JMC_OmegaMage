@@ -13,29 +13,34 @@ public class TileTexture
     public Texture2D texture;
     public Texture2D[] ditherTex;
     public float ditherChance = 0.1F;
+
+    public Material customMaterial;
 }
 
 public class LayoutTiles : MonoBehaviour
 {
+    public const int KEY_COUNT = 5;
+
     public static LayoutTiles instance;
 
     public TextAsset roomsFile; // The rooms JSON file
-    public char roomId = '0'; // Current room ID
+    public char roomId; // Current room ID
     public GameObject tilePrefab; // Prefab for all tiles
     public TileTexture[] tileTextures; // A list of named textures for tiles
 
-    private RoomsFile roomsData;
+    public RoomsFile roomsData;
 
     public GameObject portal;
+    public TypeTemplatePair[] customPortals = { };
 
-    public TypeTemplatePair[] enemyTemplates = { };
+    public TypeTemplatePair[] entityTemplates = { };
 
     private Tile[,] tiles;
     private Transform tileAnchor;
 
     private bool firstRoom = true;
 
-    private void Start()
+    private void Awake()
     {
         instance = this;
 
@@ -46,6 +51,11 @@ public class LayoutTiles : MonoBehaviour
         // Read the JSON file
         roomsData = JsonConvert.DeserializeObject<RoomsFile>(roomsFile.text);
         roomId = roomsData.startingRoom;
+    }
+
+    private void Start()
+    {
+        EffectDoor.instance.worldAnchor = tileAnchor.gameObject;
 
         // Build the room with given ID
         BuildRoom(roomId);
@@ -70,6 +80,20 @@ public class LayoutTiles : MonoBehaviour
         }
 
         return texture;
+    }
+
+    /// <summary>
+    /// Gets the material by name if the tile has a custom material
+    /// </summary>
+    /// <param name="name">The name of the texture</param>
+    /// <returns>Requested material or null</returns>
+    public Material GetTileCustomMaterial(string name)
+    {
+        TileTexture tt = tileTextures.Where(x => x.name == name).FirstOrDefault();
+        if (tt == null)
+            return null;
+
+        return tt.customMaterial;
     }
 
     /// <summary>
@@ -104,6 +128,8 @@ public class LayoutTiles : MonoBehaviour
 
         float maxY = roomRows.Length - 1;
         List<Portal> portals = new List<Portal>();
+        HashSet<int> entityIds = new HashSet<int>();
+        System.Random predictable = new System.Random(25565 + room.GetRoomId(roomsData));
 
         for (int y = 0; y < roomRows.Length; y++)
         {
@@ -122,6 +148,10 @@ public class LayoutTiles : MonoBehaviour
                         continue;
                     case '.': // default floor
                         tileTexture = floorTexture;
+                        break;
+                    case '-': // Invisible wall
+                        height = 1;
+                        tileTexture = "invisible";
                         break;
                     case '|': // default wall
                         height = 1;
@@ -156,27 +186,46 @@ public class LayoutTiles : MonoBehaviour
                         {
                             // Raise the mage cause for some reason the tutorial places them in the ground
                             Mage.instance.transform.position = tile.transform.position + Vector3.back * .6F;
-                            roomId = roomsData.rooms.Where(kvp => kvp.Value == room).Single().Key;
+                            roomId = room.GetRoomId(roomsData);
                             firstRoom = false;
                         }
                         break;
                     default:
                         if (roomsData.portals.Contains(rawType))
                         {
+                            GameObject portalTemplate = this.portal;
+                            if (roomsData.customPortals.ContainsKey(rawType))
+                            {
+                                GameObject customPortal = customPortals.Where(p => p.type == roomsData.customPortals[rawType]).Select(p => p.template).SingleOrDefault();
+                                if (!customPortal)
+                                    Debug.LogError("Requested custom portal " + roomsData.customPortals[rawType] + " cannot be found.");
+                                else
+                                    portalTemplate = customPortal;
+                            }
+
                             // Create portal
-                            GameObject gop = Instantiate(this.portal, tile.position, this.portal.transform.rotation, tileAnchor);
+                            GameObject gop = Instantiate(portalTemplate, tile.position, this.portal.transform.rotation, tileAnchor);
                             Portal portal = gop.GetComponent<Portal>();
-                            portal.destinationRoom = rawType;
-                            portals.Add(portal);
+                            if (portal)
+                            {
+                                portal.destinationRoom = rawType;
+                                portals.Add(portal);
+                            }
                         }
                         else
                         {
-                            IEnemy enemy = EnemyFactory.CreateEnemy(rawType, enemyTemplates);
-                            if (enemy == null)
+                            int id;
+                            do
+                            {
+                                id = predictable.Next(int.MinValue, int.MaxValue);
+                            } while (entityIds.Contains(id));
+
+                            IEntity entity = EntityFactory.CreateEntity(rawType, entityTemplates, id);
+                            if (entity == null)
                                 break;
 
-                            enemy.transform.position = tile.position;
-                            enemy.transform.SetParent(tileAnchor);
+                            entity.transform.position = tile.position;
+                            entity.transform.SetParent(tileAnchor);
                         }
                         break;
                 }
@@ -203,7 +252,7 @@ public class LayoutTiles : MonoBehaviour
             }
 
         firstRoom = false;
-        roomId = roomsData.rooms.Where(kvp => kvp.Value == room).Single().Key;
+        roomId = room.GetRoomId(roomsData);
     }
 
     /// <summary>

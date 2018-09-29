@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[EnemyFactory('^', 'v', '<', '>')]
+[EntityFactoryAttribute('^', 'v', '<', '>')]
 public class EnemySpiker : EnemyBase
 {
     public float speed = 5F;
@@ -37,7 +37,7 @@ public class EnemySpiker : EnemyBase
         return false;
     }
 
-    [EnemyFactoryCallback]
+    [EntityFactoryCallbackAttribute]
     public void OnFactoryGenerated(char c)
     {
         switch (c)
