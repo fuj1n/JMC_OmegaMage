@@ -3,6 +3,7 @@
 	Portal to room 1
 1: 
 	Key 1
+	Swap floor textures
 	Left portal to room 0, right portal to room 2
 2:
 	Left portal to room 1, right portal to room 3

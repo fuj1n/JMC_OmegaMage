@@ -221,7 +221,7 @@ namespace WorldEdit
 
                 customPortals = rf.customPortals;
                 startingRoom = rf.startingRoom;
-                roomsData = rf.rooms;
+                roomsData = new Dictionary<char, Room>(rf.rooms);
                 rooms.Clear();
 
                 foreach (KeyValuePair<char, Room> room in roomsData)
@@ -236,7 +236,8 @@ namespace WorldEdit
                     rooms[room.Key] = roomsTable;
                 }
 
-                DeleteRoom();
+                currentRoomId = '\0';
+                SelectRoom(startingRoom);
             }
             catch (Exception e)
             {
@@ -260,7 +261,7 @@ namespace WorldEdit
 
                     int maxSize = 0;
 
-                    foreach (KeyValuePair<char, List<List<char>>> room in rooms.OrderBy(x => x.Key))
+                    foreach (KeyValuePair<char, List<List<char>>> room in rooms)
                     {
                         if (!roomsData.ContainsKey(room.Key))
                             roomsData[room.Key] = new Room();
@@ -283,7 +284,7 @@ namespace WorldEdit
                     }
 
                     roomsFile.roomSize = maxSize;
-                    roomsFile.rooms = roomsData;
+                    roomsFile.rooms = new SortedDictionary<char, Room>(roomsData);
 
                     File.WriteAllText(saveWorldDialog.FileName, JsonConvert.SerializeObject(roomsFile, Formatting.Indented).Replace("\\n", "\n"));
 
