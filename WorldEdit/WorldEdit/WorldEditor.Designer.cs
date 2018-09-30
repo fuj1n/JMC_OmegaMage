@@ -55,6 +55,9 @@
             this.remRowBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.remColBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.btnProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveWorldDialog = new System.Windows.Forms.SaveFileDialog();
+            this.btnRename = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnWorldProperties = new System.Windows.Forms.ToolStripMenuItem();
             label1 = new System.Windows.Forms.Label();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             panel1 = new System.Windows.Forms.Panel();
@@ -241,6 +244,7 @@
             fileToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnSave,
+            this.btnWorldProperties,
             this.btnClose});
             fileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -250,13 +254,13 @@
             // btnSave
             // 
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(103, 22);
+            this.btnSave.Size = new System.Drawing.Size(180, 22);
             this.btnSave.Text = "Save";
             // 
             // btnClose
             // 
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(103, 22);
+            this.btnClose.Size = new System.Drawing.Size(180, 22);
             this.btnClose.Text = "Close";
             this.btnClose.Click += new System.EventHandler(this.CloseMenu);
             // 
@@ -265,6 +269,7 @@
             roomToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             roomToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnNew,
+            this.btnRename,
             this.btnSelect,
             this.btnDelete,
             this.btnProperties});
@@ -343,7 +348,26 @@
             // 
             this.btnProperties.Name = "btnProperties";
             this.btnProperties.Size = new System.Drawing.Size(180, 22);
-            this.btnProperties.Text = "Porperties";
+            this.btnProperties.Text = "Properties";
+            // 
+            // saveWorldDialog
+            // 
+            this.saveWorldDialog.DefaultExt = "json";
+            this.saveWorldDialog.Filter = "World Files|*.json";
+            this.saveWorldDialog.InitialDirectory = "C:\\";
+            this.saveWorldDialog.Title = "Please select a world file";
+            // 
+            // btnRename
+            // 
+            this.btnRename.Name = "btnRename";
+            this.btnRename.Size = new System.Drawing.Size(180, 22);
+            this.btnRename.Text = "Rename Room";
+            // 
+            // btnWorldProperties
+            // 
+            this.btnWorldProperties.Name = "btnWorldProperties";
+            this.btnWorldProperties.Size = new System.Drawing.Size(180, 22);
+            this.btnWorldProperties.Text = "Properties";
             // 
             // WorldEditor
             // 
@@ -355,6 +379,7 @@
             this.Controls.Add(this.menu);
             this.ForeColor = System.Drawing.SystemColors.Control;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menu;
             this.MinimumSize = new System.Drawing.Size(816, 489);
             this.Name = "WorldEditor";
@@ -396,5 +421,8 @@
         private System.Windows.Forms.ToolStripMenuItem btnNew;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem btnProperties;
+        private System.Windows.Forms.SaveFileDialog saveWorldDialog;
+        private System.Windows.Forms.ToolStripMenuItem btnRename;
+        private System.Windows.Forms.ToolStripMenuItem btnWorldProperties;
     }
 }

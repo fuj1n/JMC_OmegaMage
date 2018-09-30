@@ -117,7 +117,7 @@ public class LayoutTiles : MonoBehaviour
         string wallTexture = room.wall;
 
         // Split the room into rows of tiles based on line feeds in the json file
-        string[] roomRows = room.layout.Split('\n');
+        string[] roomRows = room.layout.Trim('\n').Split('\n');
         for (int i = 0; i < roomRows.Length; i++)
         {
             roomRows[i] = roomRows[i].Trim('\t', '\r');

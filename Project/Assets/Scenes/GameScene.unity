@@ -494,6 +494,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114404836828695708, guid: 48f5c4be88af5d7418f49832f2391577,
+        type: 2}
+      propertyPath: roomsFile
+      value: 
+      objectReference: {fileID: 4900000, guid: db104422f9f4b324d943f50ba803c93c, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 48f5c4be88af5d7418f49832f2391577, type: 2}
   m_IsPrefabAsset: 0

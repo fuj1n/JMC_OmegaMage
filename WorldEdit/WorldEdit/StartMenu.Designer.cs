@@ -60,6 +60,7 @@
             this.openWorldDialog.DefaultExt = "json";
             this.openWorldDialog.Filter = "World Files|*.json";
             this.openWorldDialog.InitialDirectory = "C:\\";
+            this.openWorldDialog.Title = "Please select a world file";
             // 
             // StartMenu
             // 

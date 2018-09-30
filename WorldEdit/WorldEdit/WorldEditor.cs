@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Console = Colorful.Console;
 
 namespace WorldEdit
 {
@@ -67,8 +69,19 @@ namespace WorldEdit
                     }
                 }
             };
+            btnRename.Click += (o, e) =>
+            {
+                using (RoomSelectorBox sel = new RoomSelectorBox())
+                {
+                    sel.text.Text = currentRoomId.ToString();
+                    if (sel.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(sel.text.Text) && !rooms.ContainsKey(sel.text.Text[0]))
+                    {
+                        currentRoomId = sel.text.Text[0];
+                    }
+                }
+            };
             btnDelete.Click += (o, e) => DeleteRoom();
-
+            btnSave.Click += (o, e) => Save();
             btnProperties.Click += (o, e) =>
             {
                 using (RoomDataEditor rd = new RoomDataEditor())
@@ -91,6 +104,23 @@ namespace WorldEdit
                             roomsData[currentRoomId].wall = rd.wall.Text;
 
                         SoftUpdateWorld();
+                    }
+                }
+            };
+
+            btnWorldProperties.Click += (o, e) =>
+            {
+                using (WorldPropertiesEditor wpe = new WorldPropertiesEditor())
+                {
+                    wpe.CustomPortals = customPortals;
+                    wpe.startingRoom.Text = startingRoom.ToString();
+
+                    if (wpe.ShowDialog() == DialogResult.OK)
+                    {
+                        if (!string.IsNullOrWhiteSpace(wpe.startingRoom.Text))
+                            startingRoom = wpe.startingRoom.Text[0];
+
+                        customPortals = wpe.CustomPortals;
                     }
                 }
             };
@@ -126,38 +156,85 @@ namespace WorldEdit
 
         public WorldEditor(string path) : this()
         {
-            //try
-            //{
-            RoomsFile rf = JsonConvert.DeserializeObject<RoomsFile>(File.ReadAllText(path));
-
-            customPortals = rf.customPortals;
-            startingRoom = rf.startingRoom;
-            roomsData = rf.rooms;
-            rooms.Clear();
-
-            foreach (KeyValuePair<char, Room> room in roomsData)
+            try
             {
-                List<List<char>> roomsTable = new List<List<char>>();
+                RoomsFile rf = JsonConvert.DeserializeObject<RoomsFile>(File.ReadAllText(path));
 
-                foreach (string row in room.Value.layout.Split('\n').Select(r => r.Trim('\t', '\r')))
+                customPortals = rf.customPortals;
+                startingRoom = rf.startingRoom;
+                roomsData = rf.rooms;
+                rooms.Clear();
+
+                foreach (KeyValuePair<char, Room> room in roomsData)
                 {
-                    roomsTable.Add(row.ToList());
+                    List<List<char>> roomsTable = new List<List<char>>();
+
+                    foreach (string row in room.Value.layout.Split('\n').Select(r => r.Trim('\t', '\r')))
+                    {
+                        roomsTable.Add(row.ToList());
+                    }
+
+                    rooms[room.Key] = roomsTable;
                 }
 
-                rooms[room.Key] = roomsTable;
+                DeleteRoom();
             }
-
-            DeleteRoom();
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLineFormatted("Cannot read \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, path);
-            //}
+            catch (Exception e)
+            {
+                Console.WriteLineFormatted("Cannot read \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, path);
+            }
         }
 
         private void Save()
         {
+            try
+            {
+                if (saveWorldDialog.ShowDialog() == DialogResult.OK)
+                {
+                    SelectRoom('\0');
 
+                    RoomsFile roomsFile = new RoomsFile();
+                    roomsData = roomsData.Where(d => rooms.ContainsKey(d.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                    roomsFile.customPortals = customPortals;
+                    roomsFile.startingRoom = startingRoom;
+
+                    int maxSize = 0;
+
+                    foreach (KeyValuePair<char, List<List<char>>> room in rooms)
+                    {
+                        if (!roomsData.ContainsKey(room.Key))
+                            roomsData[room.Key] = new Room();
+
+                        // Sanitize the room layout to be uniform width and height
+                        int highestColumnCount = 0;
+                        room.Value.ForEach(row => highestColumnCount = Math.Max(highestColumnCount, row.Count));
+                        room.Value.ForEach(row =>
+                        {
+                            while (row.Count < highestColumnCount)
+                                row.Add(' ');
+                        });
+
+                        // Find the biggest room dimension
+                        maxSize = Math.Max(maxSize, Math.Max(room.Value.Count, highestColumnCount));
+
+                        roomsData[room.Key].layout = "\n";
+                        room.Value.ForEach(row => roomsData[room.Key].layout += string.Join("", row) + "\n");
+                        roomsData[room.Key].layout = roomsData[room.Key].layout.TrimEnd('\n', '\r');
+                    }
+
+                    roomsFile.roomSize = maxSize;
+                    roomsFile.rooms = roomsData;
+
+                    File.WriteAllText(saveWorldDialog.FileName, JsonConvert.SerializeObject(roomsFile, Formatting.Indented).Replace("\\n", "\n"));
+
+                    SelectRoom(startingRoom);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLineFormatted("Cannot write \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, "file");
+            }
         }
 
         private bool SelectPalette(object o)
@@ -206,14 +283,23 @@ namespace WorldEdit
 
         private void SelectRoom(char c)
         {
-            if (!rooms.ContainsKey(c))
+            if (c != '\0' && !rooms.ContainsKey(c))
+            {
+                CreateRoom(c);
                 return;
+            }
 
             if (currentRoomId != '\0')
                 rooms[currentRoomId] = currentRoom;
             currentRoomId = c;
-            currentRoom = rooms[currentRoomId];
-            rooms.Remove(currentRoomId);
+
+            if (currentRoomId == '\0')
+                currentRoom = new List<List<char>>();
+            else
+            {
+                currentRoom = rooms[currentRoomId];
+                rooms.Remove(currentRoomId);
+            }
 
             int highestColumnCount = 0;
             currentRoom.ForEach(row => highestColumnCount = Math.Max(highestColumnCount, row.Count));
