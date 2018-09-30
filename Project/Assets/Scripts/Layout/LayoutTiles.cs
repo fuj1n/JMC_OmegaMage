@@ -241,7 +241,7 @@ public class LayoutTiles : MonoBehaviour
                             if (entity == null)
                                 break;
 
-                            entity.transform.position = tile.position;
+                            entity.transform.position = tile.position + Vector3.back * tile.height;
                             entity.transform.SetParent(tileAnchor);
                         }
                         break;

@@ -228,7 +228,7 @@ namespace WorldEdit
                 {
                     List<List<char>> roomsTable = new List<List<char>>();
 
-                    foreach (string row in room.Value.layout.Split('\n').Select(r => r.Trim('\t', '\r')))
+                    foreach (string row in room.Value.layout.Trim('\n').Split('\n').Select(r => r.Trim('\t', '\r')))
                     {
                         roomsTable.Add(row.ToList());
                     }
@@ -260,7 +260,7 @@ namespace WorldEdit
 
                     int maxSize = 0;
 
-                    foreach (KeyValuePair<char, List<List<char>>> room in rooms)
+                    foreach (KeyValuePair<char, List<List<char>>> room in rooms.OrderBy(x => x.Key))
                     {
                         if (!roomsData.ContainsKey(room.Key))
                             roomsData[room.Key] = new Room();
@@ -609,7 +609,7 @@ namespace WorldEdit
         {
             btnSelect.DropDownItems.Clear();
 
-            foreach (char room in rooms.Select(x => x.Key))
+            foreach (char room in rooms.Select(x => x.Key).OrderBy(k => k))
             {
                 ToolStripMenuItem i = new ToolStripMenuItem
                 {

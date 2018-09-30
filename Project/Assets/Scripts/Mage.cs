@@ -10,6 +10,8 @@ public class Mage : MonoBehaviour
     public static Mage instance;
     public const bool DEBUG = false;
 
+    public float masterVolume = 0.5F;
+
     [Header("Input")]
     /// <summary>
     /// Time it takes to register a tap
@@ -34,6 +36,8 @@ public class Mage : MonoBehaviour
     public float speed = 2F;
 
     [Header("Elements")]
+    public bool unlockAll = false;
+
     public GameObject[] elementPrefabs;
     public float elementRotationDistance = 0.5F;
     public float elementRotationSpeed = 0.5F;
@@ -124,9 +128,11 @@ public class Mage : MonoBehaviour
         }
         invincibilitySequence.Pause().SetAutoKill(false);
 
-        // Unlock all the elements for now
-        System.Enum.GetValues(typeof(ElementType)).Cast<ElementType>().ToList().ForEach(e => UnlockElement(e));
+        // Unlocks all the elements
+        if (unlockAll)
+            System.Enum.GetValues(typeof(ElementType)).Cast<ElementType>().ToList().ForEach(e => UnlockElement(e));
 
+        // Caches all the spells for quick access without the need to look them up every time
         foreach (ISpell spell in spells.Select(s => s.GetComponent<ISpell>()))
         {
             ElementType element = spell.GetElement();
@@ -223,6 +229,7 @@ public class Mage : MonoBehaviour
         }
 
         RaycastHit[] hits = Physics.BoxCastAll(transform.position, Vector3.one * .25F, Vector3.back);
+        float highest = 0F;
 
         foreach (RaycastHit hit in hits)
         {
@@ -230,11 +237,13 @@ public class Mage : MonoBehaviour
 
             if (t && t.height <= .25F)
             {
-                Vector3 pos = transform.position;
-                pos.z = -(t.height + .1F);
-                transform.position = pos;
+                highest = Mathf.Max(highest, t.height);
             }
         }
+
+        Vector3 pos = transform.position;
+        pos.z = -(highest + .1F);
+        transform.position = pos;
     }
 
     private void OnCollisionEnter(Collision collision)

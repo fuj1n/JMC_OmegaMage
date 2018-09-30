@@ -52,7 +52,7 @@ public class EffectDoor : MonoBehaviour
         foreground.material.DOFade(0F, 2F).OnComplete(() =>
         {
             AudioClip clip = keysCollected >= LayoutTiles.KEY_COUNT ? allCollectedSound : collectedSound;
-            AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, 0.5F);
+            AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, Mage.instance.masterVolume);
 
             if (keysCollected < LayoutTiles.KEY_COUNT)
             {

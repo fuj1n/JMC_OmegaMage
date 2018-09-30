@@ -1,0 +1,82 @@
+{
+  "roomSize": 12,
+  "startingRoom": "0",
+  "customPortals": {
+    "F": "boss"
+  },
+  "rooms": {
+    "3": {
+      "floor": "tile",
+      "floor2": "dirt",
+      "wall": "stone",
+      "wall2": "wood",
+      "floorHeight": 0.15,
+      "floor2Height": 0.0,
+      "wallHeight": 1.0,
+      "wall2Height": 1.0,
+      "layout": "
+ ||||| 
+ |+++| 
+-2+w+ -
+ |+++| 
+ ||||| "
+    },
+    "1": {
+      "floor": "tile",
+      "floor2": "dirt",
+      "wall": "stone",
+      "wall2": "wood",
+      "floorHeight": 0.0,
+      "floor2Height": 0.0,
+      "wallHeight": 1.0,
+      "wall2Height": 1.0,
+      "layout": "
+ ::::::: 
+ :...v.: 
+ :.....: 
+-0..k..2-
+ :.....: 
+ :.^...: 
+ ::::::: "
+    },
+    "2": {
+      "floor": "dirt",
+      "floor2": "tile",
+      "wall": "stone",
+      "wall2": "wood",
+      "floorHeight": 0.0,
+      "floor2Height": 0.0,
+      "wallHeight": 1.0,
+      "wall2Height": 1.0,
+      "layout": "
+ |||||||| 
+-1......| 
+ |......| 
+ |......| 
+ |......| 
+ |.....b| 
+ |..<...| 
+ |.....>| 
+ |......3-
+ |||||||| "
+    },
+    "0": {
+      "floor": "dirt",
+      "floor2": "tile",
+      "wall": "stone",
+      "wall2": "wood",
+      "floorHeight": 0.0,
+      "floor2Height": 0.0,
+      "wallHeight": 1.0,
+      "wall2Height": 0.5,
+      "layout": "
+||||||||||| 
+|.........| 
+|.:.:.:.:.| 
+|.X.......1-
+|.:.:.:.:.| 
+|.........| 
+||||||||||| "
+    }
+  }
+}

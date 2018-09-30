@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6518c10b083aa948a25ea9ce3543fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomsFile: {fileID: 4900000, guid: 5f1ef4b9728d8634f83cb53ba13ea113, type: 3}
+  roomsFile: {fileID: 4900000, guid: ea4d7469a6029934088b7598ae344acf, type: 3}
   roomId: 48
   tilePrefab: {fileID: 100000, guid: 84bf7187657d043eda6a4404d8d5abf6, type: 2}
   tileTextures:
@@ -76,6 +76,16 @@ MonoBehaviour:
     ditherTex: []
     ditherChance: 0.1
     customMaterial: {fileID: 2100000, guid: 6222cbc7eaaeee54588c5d63acc5d1ea, type: 2}
+  - name: wood
+    texture: {fileID: 2800000, guid: 664f415174bcd4baba1e7a75e2273f74, type: 3}
+    ditherTex: []
+    ditherChance: 0.1
+    customMaterial: {fileID: 0}
+  - name: tile
+    texture: {fileID: 2800000, guid: 4d9f9a7aa8b204a8699d706760267a96, type: 3}
+    ditherTex: []
+    ditherChance: 0.1
+    customMaterial: {fileID: 0}
   portal: {fileID: 100000, guid: aa127d48e561348ed8c31db53e98ef53, type: 2}
   customPortals:
   - type: boss
@@ -87,3 +97,5 @@ MonoBehaviour:
     template: {fileID: 100002, guid: c73ae1002011944afad4491c1b0eb9d8, type: 2}
   - type: EntityKey
     template: {fileID: 1635743236778760, guid: c5621cae735d40d408618122f3c1b6ac, type: 2}
+  - type: EntityUnlockElement
+    template: {fileID: 1979979461631800, guid: a8aabb2eec2b2e24b9a36d058628bd6f, type: 2}
