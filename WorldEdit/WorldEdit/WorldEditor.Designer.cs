@@ -45,19 +45,21 @@
             this.setSizeBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnWorldProperties = new System.Windows.Forms.ToolStripMenuItem();
             this.btnClose = new System.Windows.Forms.ToolStripMenuItem();
             this.btnNew = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnRename = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnProperties = new System.Windows.Forms.ToolStripMenuItem();
             this.menu = new System.Windows.Forms.MenuStrip();
             this.addRowBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.addColBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.remRowBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.remColBtn = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnLoadImage = new System.Windows.Forms.ToolStripMenuItem();
             this.saveWorldDialog = new System.Windows.Forms.SaveFileDialog();
-            this.btnRename = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnWorldProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.openImageDialog = new System.Windows.Forms.OpenFileDialog();
             label1 = new System.Windows.Forms.Label();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             panel1 = new System.Windows.Forms.Panel();
@@ -254,13 +256,19 @@
             // btnSave
             // 
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(180, 22);
+            this.btnSave.Size = new System.Drawing.Size(127, 22);
             this.btnSave.Text = "Save";
+            // 
+            // btnWorldProperties
+            // 
+            this.btnWorldProperties.Name = "btnWorldProperties";
+            this.btnWorldProperties.Size = new System.Drawing.Size(127, 22);
+            this.btnWorldProperties.Text = "Properties";
             // 
             // btnClose
             // 
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(180, 22);
+            this.btnClose.Size = new System.Drawing.Size(127, 22);
             this.btnClose.Text = "Close";
             this.btnClose.Click += new System.EventHandler(this.CloseMenu);
             // 
@@ -281,20 +289,32 @@
             // btnNew
             // 
             this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(180, 22);
+            this.btnNew.Size = new System.Drawing.Size(152, 22);
             this.btnNew.Text = "New Room";
+            // 
+            // btnRename
+            // 
+            this.btnRename.Name = "btnRename";
+            this.btnRename.Size = new System.Drawing.Size(152, 22);
+            this.btnRename.Text = "Rename Room";
             // 
             // btnSelect
             // 
             this.btnSelect.Name = "btnSelect";
-            this.btnSelect.Size = new System.Drawing.Size(180, 22);
+            this.btnSelect.Size = new System.Drawing.Size(152, 22);
             this.btnSelect.Text = "Select Room";
             // 
             // btnDelete
             // 
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(180, 22);
+            this.btnDelete.Size = new System.Drawing.Size(152, 22);
             this.btnDelete.Text = "Delete Room";
+            // 
+            // btnProperties
+            // 
+            this.btnProperties.Name = "btnProperties";
+            this.btnProperties.Size = new System.Drawing.Size(152, 22);
+            this.btnProperties.Text = "Properties";
             // 
             // menu
             // 
@@ -305,7 +325,8 @@
             this.addRowBtn,
             this.addColBtn,
             this.remRowBtn,
-            this.remColBtn});
+            this.remColBtn,
+            this.btnLoadImage});
             this.menu.Location = new System.Drawing.Point(0, 0);
             this.menu.Name = "menu";
             this.menu.Size = new System.Drawing.Size(800, 24);
@@ -344,30 +365,23 @@
             this.remColBtn.Size = new System.Drawing.Size(70, 20);
             this.remColBtn.Text = "- Column";
             // 
-            // btnProperties
+            // btnLoadImage
             // 
-            this.btnProperties.Name = "btnProperties";
-            this.btnProperties.Size = new System.Drawing.Size(180, 22);
-            this.btnProperties.Text = "Properties";
+            this.btnLoadImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.btnLoadImage.ForeColor = System.Drawing.SystemColors.Control;
+            this.btnLoadImage.Name = "btnLoadImage";
+            this.btnLoadImage.Size = new System.Drawing.Size(147, 20);
+            this.btnLoadImage.Text = "Load Room From Image";
             // 
             // saveWorldDialog
             // 
             this.saveWorldDialog.DefaultExt = "json";
             this.saveWorldDialog.Filter = "World Files|*.json";
-            this.saveWorldDialog.InitialDirectory = "C:\\";
             this.saveWorldDialog.Title = "Please select a world file";
             // 
-            // btnRename
+            // openImageDialog
             // 
-            this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(180, 22);
-            this.btnRename.Text = "Rename Room";
-            // 
-            // btnWorldProperties
-            // 
-            this.btnWorldProperties.Name = "btnWorldProperties";
-            this.btnWorldProperties.Size = new System.Drawing.Size(180, 22);
-            this.btnWorldProperties.Text = "Properties";
+            this.openImageDialog.Filter = "Images|*.png";
             // 
             // WorldEditor
             // 
@@ -424,5 +438,7 @@
         private System.Windows.Forms.SaveFileDialog saveWorldDialog;
         private System.Windows.Forms.ToolStripMenuItem btnRename;
         private System.Windows.Forms.ToolStripMenuItem btnWorldProperties;
+        private System.Windows.Forms.ToolStripMenuItem btnLoadImage;
+        private System.Windows.Forms.OpenFileDialog openImageDialog;
     }
 }

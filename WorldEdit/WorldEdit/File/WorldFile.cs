@@ -15,17 +15,30 @@ namespace WorldEdit
         public Dictionary<char, string> keys;
         public Dictionary<char, string> labels;
         public Dictionary<string, string> tags;
+        public Dictionary<string, char> imageCodes;
 
         [JsonIgnore]
         public Bitmap missingno;
         [JsonIgnore]
         public Bitmap blank = new Bitmap(32, 32);
+        [JsonIgnore]
+        public Dictionary<int, char> imageCodesConverted;
 
         private Dictionary<string, Image> textures = new Dictionary<string, Image>();
         private Room defaultRoom = new Room();
 
         public void LoadTextures(string directory)
         {
+            try
+            {
+                if (imageCodes != null)
+                    imageCodesConverted = imageCodes.Select(ic => new { K = int.Parse("FF" + ic.Key, System.Globalization.NumberStyles.HexNumber), V = ic.Value }).ToDictionary(kvp => kvp.K, kvp => kvp.V);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Cannot read image codes " + e.GetType().Name, Color.DarkRed);
+            }
+
             foreach (string texture in keys.Select(x => x.Value).Concat(tags.Select(x => x.Value)))
             {
                 if (texture.StartsWith("$") || textures.ContainsKey(texture))
@@ -80,6 +93,10 @@ namespace WorldEdit
                 texture = tags[defaultRoom.wall];
             else if (texture == "$floor")
                 texture = tags[defaultRoom.floor];
+            else if (texture == "$wall2")
+                texture = tags[defaultRoom.wall2];
+            else if (texture == "$floor2")
+                texture = tags[defaultRoom.floor2];
 
             if (!textures.ContainsKey(texture) && tags.ContainsKey(texture))
                 texture = tags[texture];

@@ -53,10 +53,12 @@ namespace WorldEdit
             if (customPortals.Controls.OfType<DictionaryElement>().Any(d => d.Key == key.ToString()))
                 return;
 
-            DictionaryElement el = new DictionaryElement();
-            el.Key = key.ToString();
-            el.Value = value;
-            el.Parent = customPortals;
+            DictionaryElement el = new DictionaryElement
+            {
+                Key = key.ToString(),
+                Value = value,
+                Parent = customPortals
+            };
             el.onClickRemove += e =>
             {
                 customPortals.Controls.Remove(e);

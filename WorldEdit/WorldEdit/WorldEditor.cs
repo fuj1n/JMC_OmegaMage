@@ -11,9 +11,22 @@ namespace WorldEdit
 {
     public partial class WorldEditor : Form
     {
-        const int gridSize = 32;
+        const int gridSize = 48;
 
-        private static WorldFile world;
+        public static WorldFile World
+        {
+            get
+            {
+                if (_world == null)
+                {
+                    _world = JsonConvert.DeserializeObject<WorldFile>(File.ReadAllText("definition/world.json"));
+                    _world.LoadTextures("definition/textures");
+                }
+
+                return _world;
+            }
+        }
+        private static WorldFile _world;
 
         private Dictionary<char, List<List<char>>> rooms;
         private char currentRoomId = '0';
@@ -32,11 +45,8 @@ namespace WorldEdit
         {
             InitializeComponent();
 
-            if (world == null)
-            {
-                world = JsonConvert.DeserializeObject<WorldFile>(File.ReadAllText("definition/world.json"));
-                world.LoadTextures("definition/textures");
-            }
+            // Ensure the world gets loaded here
+            WorldFile temp = World;
 
             addRowBtn.Click += (o, e) => AddRow();
             addColBtn.Click += (o, e) => AddColumn();
@@ -125,19 +135,52 @@ namespace WorldEdit
                 }
             };
 
+            btnLoadImage.Click += (o, e) =>
+            {
+                if (openImageDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Workaround for bug in GDI+
+                        using (Bitmap image = new Bitmap(openImageDialog.FileName))
+                        {
+                            SetSize(image.Width, image.Height, false);
+
+                            for (int y = 0; y < image.Height; y++)
+                            {
+                                for (int x = 0; x < image.Width; x++)
+                                {
+                                    int pixel = image.GetPixel(x, y).ToArgb();
+                                    if (World.imageCodesConverted.ContainsKey(pixel))
+                                        currentRoom[y][x] = World.imageCodesConverted[pixel];
+                                    else
+                                        currentRoom[y][x] = ' ';
+                                }
+                            }
+
+                            UpdateWorld();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLineFormatted("Cannot read \"{0}\" + (" + ex.GetType().Name + ")", Color.Green, Color.DarkRed, openImageDialog.FileName);
+                    }
+                }
+            };
+
             rooms = new Dictionary<char, List<List<char>>>();
             currentRoom = new List<List<char>>();
 
-            foreach (KeyValuePair<char, string> pair in world.keys)
+            foreach (KeyValuePair<char, string> pair in World.keys)
             {
                 PaletteItem pi = new PaletteItem
                 {
                     Parent = palette,
-                    Image = world.GetTexture(pair.Value),
+                    Image = World.GetTexture(pair.Value),
                     Text = pair.Key.ToString()
                 };
-                if (world.labels.ContainsKey(pair.Key))
-                    pi.Text += " " + world.labels[pair.Key];
+                if (World.labels.ContainsKey(pair.Key))
+                    pi.Text += " " + World.labels[pair.Key];
                 pi.selectCallbackParam = pair.Key;
                 pi.selectCallback = SelectPalette;
             }
@@ -145,7 +188,7 @@ namespace WorldEdit
             PaletteItem portal = new PaletteItem
             {
                 Parent = palette,
-                Image = world.GetTexture(world.portal),
+                Image = World.GetTexture(World.portal),
                 Text = "(Portal)",
                 selectCallbackParam = "portal",
                 selectCallback = SelectPalette
@@ -368,7 +411,7 @@ namespace WorldEdit
             UpdateWorld();
         }
 
-        private void SetSize(int newX, int newY)
+        private void SetSize(int newX, int newY, bool rebuild = true)
         {
             List<List<char>> newSize = new List<List<char>>();
 
@@ -389,7 +432,8 @@ namespace WorldEdit
             roomHeight = newY;
 
             currentRoom = newSize;
-            UpdateWorld();
+            if (rebuild)
+                UpdateWorld();
         }
 
         private void Nudge(ArrowDirection direction)
@@ -433,7 +477,7 @@ namespace WorldEdit
         {
             foreach (PictureBox pb in worldTable.Controls.OfType<PictureBox>())
             {
-                pb.Image = world.GetTexture(GetTileTexture(currentRoom[worldTable.GetRow(pb)][worldTable.GetColumn(pb)]));
+                pb.Image = World.GetTexture(GetTileTexture(currentRoom[worldTable.GetRow(pb)][worldTable.GetColumn(pb)]));
             }
         }
 
@@ -464,12 +508,14 @@ namespace WorldEdit
                     worldTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, gridSize));
                     char c = currentRoom[y][x];
 
-                    PictureBox pb = new PictureBox();
-                    pb.Parent = worldTable;
-                    pb.Dock = DockStyle.Fill;
-                    pb.BackgroundImage = world.GetTexture(world.background);
-                    pb.Image = world.GetTexture(GetTileTexture(c));
-                    pb.SizeMode = PictureBoxSizeMode.StretchImage;
+                    PictureBox pb = new PictureBox
+                    {
+                        Parent = worldTable,
+                        Dock = DockStyle.Fill,
+                        BackgroundImage = World.GetTexture(World.background),
+                        Image = World.GetTexture(GetTileTexture(c)),
+                        SizeMode = PictureBoxSizeMode.StretchImage
+                    };
 
                     worldTable.SetRow(pb, y);
                     worldTable.SetColumn(pb, x);
@@ -486,10 +532,10 @@ namespace WorldEdit
         private string GetTileTexture(char tile)
         {
             string texture = "missingno";
-            if (world.keys.ContainsKey(tile))
-                texture = world.keys[tile];
+            if (World.keys.ContainsKey(tile))
+                texture = World.keys[tile];
             else if (rooms.ContainsKey(tile) || currentRoomId == tile)
-                texture = world.portal;
+                texture = World.portal;
 
             if (texture.StartsWith("$") && !texture.Equals("$blank") && roomsData.ContainsKey(currentRoomId))
             {
@@ -502,9 +548,15 @@ namespace WorldEdit
                     case "floor":
                         tex = roomsData[currentRoomId].floor;
                         break;
+                    case "wall2":
+                        Text = roomsData[currentRoomId].wall2;
+                        break;
+                    case "floor2":
+                        tex = roomsData[currentRoomId].floor2;
+                        break;
                 }
 
-                if (!string.IsNullOrWhiteSpace(tex) && world.tags.ContainsKey(tex))
+                if (!string.IsNullOrWhiteSpace(tex) && World.tags.ContainsKey(tex))
                 {
                     texture = tex;
                 }
@@ -529,7 +581,7 @@ namespace WorldEdit
                 return;
 
             currentRoom[y][x] = selection;
-            pb.Image = world.GetTexture(GetTileTexture(selection));
+            pb.Image = World.GetTexture(GetTileTexture(selection));
         }
 
         private void CloseMenu(object sender, System.EventArgs e)
@@ -543,9 +595,10 @@ namespace WorldEdit
 
             foreach (char room in rooms.Select(x => x.Key))
             {
-                ToolStripMenuItem i = new ToolStripMenuItem();
-
-                i.Text = room.ToString();
+                ToolStripMenuItem i = new ToolStripMenuItem
+                {
+                    Text = room.ToString()
+                };
                 i.Click += (o, e) => SelectRoom(room);
 
                 btnSelect.DropDownItems.Add(i);

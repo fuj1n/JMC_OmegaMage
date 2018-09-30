@@ -114,7 +114,9 @@ public class LayoutTiles : MonoBehaviour
 
         // Get the texture names for the floors and walls from <room> attributes
         string floorTexture = room.floor;
+        string floor2Texture = room.floor2;
         string wallTexture = room.wall;
+        string wall2Texture = room.wall2;
 
         // Split the room into rows of tiles based on line feeds in the json file
         string[] roomRows = room.layout.Trim('\n').Split('\n');
@@ -149,6 +151,9 @@ public class LayoutTiles : MonoBehaviour
                     case '.': // default floor
                         tileTexture = floorTexture;
                         break;
+                    case '+': // second floor
+                        tileTexture = floor2Texture;
+                        break;
                     case '-': // Invisible wall
                         height = 1;
                         tileTexture = "invisible";
@@ -156,6 +161,10 @@ public class LayoutTiles : MonoBehaviour
                     case '|': // default wall
                         height = 1;
                         tileTexture = wallTexture;
+                        break;
+                    case ':': // second wall
+                        height = 1;
+                        tileTexture = wall2Texture;
                         break;
                     default:
                         // interpret as floor

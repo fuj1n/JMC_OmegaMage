@@ -31,6 +31,8 @@
             this.btnNew = new System.Windows.Forms.Button();
             this.btnLoad = new System.Windows.Forms.Button();
             this.openWorldDialog = new System.Windows.Forms.OpenFileDialog();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.saveColorsDialog = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // btnNew
@@ -59,15 +61,30 @@
             // 
             this.openWorldDialog.DefaultExt = "json";
             this.openWorldDialog.Filter = "World Files|*.json";
-            this.openWorldDialog.InitialDirectory = "C:\\";
             this.openWorldDialog.Title = "Please select a world file";
+            // 
+            // btnExport
+            // 
+            this.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExport.Location = new System.Drawing.Point(12, 104);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(300, 40);
+            this.btnExport.TabIndex = 2;
+            this.btnExport.Text = "Export Color Map For Painting";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.ExportColorMap);
+            // 
+            // saveColorsDialog
+            // 
+            this.saveColorsDialog.Filter = "Image Files|*.png";
             // 
             // StartMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(322, 111);
+            this.ClientSize = new System.Drawing.Size(322, 151);
+            this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.btnNew);
             this.ForeColor = System.Drawing.SystemColors.Control;
@@ -84,5 +101,7 @@
         private System.Windows.Forms.Button btnNew;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.OpenFileDialog openWorldDialog;
+        private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.SaveFileDialog saveColorsDialog;
     }
 }
