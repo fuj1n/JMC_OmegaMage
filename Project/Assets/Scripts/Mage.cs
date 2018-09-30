@@ -221,6 +221,20 @@ public class Mage : MonoBehaviour
         {
             rigidbody.velocity = Vector3.zero;
         }
+
+        RaycastHit[] hits = Physics.BoxCastAll(transform.position, Vector3.one * .25F, Vector3.back);
+
+        foreach (RaycastHit hit in hits)
+        {
+            Tile t = hit.collider.GetComponent<Tile>();
+
+            if (t && t.height <= .25F)
+            {
+                Vector3 pos = transform.position;
+                pos.z = -(t.height + .1F);
+                transform.position = pos;
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -229,10 +243,8 @@ public class Mage : MonoBehaviour
 
         Tile tile = source.GetComponent<Tile>();
 
-        if (tile && tile.height > 0F)
-        {
+        if (tile && tile.height > .25F)
             StopWalking();
-        }
     }
 
     private void OnCollisionStay(Collision collision)

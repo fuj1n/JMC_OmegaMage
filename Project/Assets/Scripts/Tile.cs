@@ -8,7 +8,7 @@ public class Tile : MonoBehaviour
     public bool ditherTexture = true;
 
     private string texture_val;
-    private int height_val = 0;
+    private float height_val = 0;
     private Vector3 position_val;
 
     private new Renderer renderer;
@@ -30,7 +30,7 @@ public class Tile : MonoBehaviour
     /// <summary>
     /// Height moves the tile up or down, walls have height of 1
     /// </summary>
-    public int height
+    public float height
     {
         get
         {

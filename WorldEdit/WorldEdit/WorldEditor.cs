@@ -102,7 +102,14 @@ namespace WorldEdit
                     rd.RoomId = currentRoomId;
 
                     rd.floor.Text = roomsData[currentRoomId].floor;
+                    rd.floor2.Text = roomsData[currentRoomId].floor2;
                     rd.wall.Text = roomsData[currentRoomId].wall;
+                    rd.wall2.Text = roomsData[currentRoomId].wall2;
+
+                    rd.floorHeight.Value = (decimal)roomsData[currentRoomId].floorHeight;
+                    rd.floor2Height.Value = (decimal)roomsData[currentRoomId].floor2Height;
+                    rd.wallHeight.Value = (decimal)roomsData[currentRoomId].wallHeight;
+                    rd.wall2Height.Value = (decimal)roomsData[currentRoomId].wall2Height;
 
                     if (rd.ShowDialog() == DialogResult.OK)
                     {
@@ -112,6 +119,15 @@ namespace WorldEdit
                             roomsData[currentRoomId].floor = rd.floor.Text;
                         if (!string.IsNullOrWhiteSpace(rd.wall.Text))
                             roomsData[currentRoomId].wall = rd.wall.Text;
+                        if (!string.IsNullOrWhiteSpace(rd.floor2.Text))
+                            roomsData[currentRoomId].floor2 = rd.floor2.Text;
+                        if (!string.IsNullOrWhiteSpace(rd.wall2.Text))
+                            roomsData[currentRoomId].wall2 = rd.wall2.Text;
+
+                        roomsData[currentRoomId].floorHeight = (float)rd.floorHeight.Value;
+                        roomsData[currentRoomId].floor2Height = (float)rd.floor2Height.Value;
+                        roomsData[currentRoomId].wallHeight = (float)rd.wallHeight.Value;
+                        roomsData[currentRoomId].wall2Height = (float)rd.wall2Height.Value;
 
                         SoftUpdateWorld();
                     }

@@ -118,6 +118,11 @@ public class LayoutTiles : MonoBehaviour
         string wallTexture = room.wall;
         string wall2Texture = room.wall2;
 
+        float floorHeight = room.floorHeight;
+        float floor2Height = room.floor2Height;
+        float wallHeight = room.wallHeight;
+        float wall2Height = room.wall2Height;
+
         // Split the room into rows of tiles based on line feeds in the json file
         string[] roomRows = room.layout.Trim('\n').Split('\n');
         for (int i = 0; i < roomRows.Length; i++)
@@ -137,7 +142,7 @@ public class LayoutTiles : MonoBehaviour
         {
             for (int x = 0; x < roomRows[y].Length; x++)
             {
-                int height = 0;
+                float height = 0;
                 string tileTexture = floorTexture;
                 char type, rawType;
 
@@ -149,25 +154,28 @@ public class LayoutTiles : MonoBehaviour
                     case '_':
                         continue;
                     case '.': // default floor
+                        height = floorHeight;
                         tileTexture = floorTexture;
                         break;
                     case '+': // second floor
+                        height = floor2Height;
                         tileTexture = floor2Texture;
                         break;
                     case '-': // Invisible wall
-                        height = 1;
+                        height = 1F;
                         tileTexture = "invisible";
                         break;
                     case '|': // default wall
-                        height = 1;
+                        height = wallHeight;
                         tileTexture = wallTexture;
                         break;
                     case ':': // second wall
-                        height = 1;
+                        height = wall2Height;
                         tileTexture = wall2Texture;
                         break;
                     default:
                         // interpret as floor
+                        height = floorHeight;
                         type = '.';
                         break;
                 }
