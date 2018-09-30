@@ -752,11 +752,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6cb05bd9adcaf0468174f01d65c8a8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  masterVolume: 0.5
   mouseTapTime: 0.1
   mouseDragDistance: 5
   tapIndicator: {fileID: 100000, guid: 65bee36374982469f8b4797b1b515e38, type: 2}
   activeScreenWidth: 0.8666
   speed: 2
+  unlockAll: 0
   elementPrefabs:
   - {fileID: 100000, guid: 66ad41f2a71ba4b23a3c246befe4bde8, type: 2}
   - {fileID: 100000, guid: daf45af0a167c4df29c284e530022191, type: 2}

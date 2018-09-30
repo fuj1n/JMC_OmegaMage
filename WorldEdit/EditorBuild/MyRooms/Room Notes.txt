@@ -2,6 +2,7 @@
 	Wall 2 is half height
 	Portal to room 1
 1: 
+	Key 1
 	Left portal to room 0, right portal to room 2
 2:
 	Left portal to room 1, right portal to room 3
@@ -9,8 +10,51 @@
 	Swap floor textures
 	Floor 1 is raised by .25
 	Left portal to room 2, right portal to room 4
+	Water rune unlock
 4:
+	Key 2
 	Floor 1 is wood
 	Floor 2 is raised by .1
 	Left portal to room 3, Right portal to room F (boss room)
 	Top portal to room 5, bottom portal to room 6
+	In-wall portal to room E (maybe cover it with a block that needs to be destroyed?)
+5:
+	Wall 2 is stone
+	Wall 1 is half height
+	Bottom portal to room 4, left portal to room 7
+	Top portal to room 8
+6:
+	Top portal to room 4
+	Bottom portal to room A
+	Left portal to room B
+	Right portal to room C
+7:
+	Right portal to room 5, left portal to room 9
+8:
+	Key 3
+	Bottom portal to room 5
+9:
+	Swap floor textures
+	Floor 1 is raised by .25
+	Right portal to room 7
+	Fire rune unlock
+A:
+	Swap floor textures
+	Floor 1 is raised by .25
+	Top portal to room 6
+	Air rune unlock
+B:
+	Key 4
+	Wall 2 is half height
+	Right portal to room 6
+C:
+	Key 5
+	Wall 2 is half height
+	Left portal to room 6
+E:
+	Swap floor textures
+	Floor 1 is raised by .25
+	Right portal to room 4
+	Earth rune unlock
+F: (boss)
+	Left portal to room 4 (disable the portal at boss spawn)
