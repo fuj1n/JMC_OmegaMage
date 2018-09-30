@@ -5,6 +5,7 @@ public class Tile : MonoBehaviour
     public char type;
 
     public string startTexture = "";
+    public bool ditherTexture = true;
 
     private string texture_val;
     private int height_val = 0;
@@ -59,7 +60,7 @@ public class Tile : MonoBehaviour
             Material customMaterial = LayoutTiles.instance.GetTileCustomMaterial(texture_val);
             renderer.material = customMaterial ? customMaterial : defaultMaterial;
 
-            Texture2D t2D = LayoutTiles.instance.GetTileTexture(texture_val);
+            Texture2D t2D = LayoutTiles.instance.GetTileTexture(texture_val, ditherTexture);
             if (!t2D && !customMaterial)
                 Utils.tr("ERROR", "Tile.type{set}=", value, "No matching Texture2D in LayoutTiles.tileTextures!");
             else if (t2D)

@@ -12,11 +12,15 @@ public class PortalBoss : Portal
     private Material material;
     private new Collider collider;
 
+    private Vector3 startPos;
+
     private void Awake()
     {
         renderer = GetComponentInChildren<Renderer>();
         material = renderer.material;
         collider = GetComponent<Collider>();
+
+        startPos = renderer.transform.position;
 
         UpdateState();
     }
@@ -35,10 +39,13 @@ public class PortalBoss : Portal
 
     private void UpdateState()
     {
-        if (keyTextures.Length >= keysCollected.Count)
+        if (keyTextures.Length > keysCollected.Count)
             material.mainTexture = keyTextures[keysCollected.Count];
 
         collider.isTrigger = keysCollected.Count >= LayoutTiles.KEY_COUNT;
+
+        if (keysCollected.Count >= LayoutTiles.KEY_COUNT)
+            renderer.transform.position = startPos + Vector3.forward * 0.9F;
     }
 
     public static bool IsKeyCollected(int id)
@@ -59,11 +66,12 @@ public class PortalBoss : Portal
         }
 
         keysCollected.Add(id);
-        EffectDoor.instance.Simulate(keysCollected.Count);
 
         PortalBoss boss = FindObjectOfType<PortalBoss>();
 
         if (boss)
             boss.UpdateState();
+
+        EffectDoor.instance.Simulate(keysCollected.Count);
     }
 }

@@ -14,6 +14,8 @@ public class EffectDoor : MonoBehaviour
     public AudioClip collectedSound;
     public AudioClip allCollectedSound;
 
+    public ParticleSystem particles;
+
     public Texture2D[] textures = { };
 
     [HideInInspector]
@@ -29,6 +31,9 @@ public class EffectDoor : MonoBehaviour
 
     public void Simulate(int keysCollected)
     {
+        if (keysCollected > LayoutTiles.KEY_COUNT)
+            return;
+
         if (textures == null || textures.Length == 0)
             return;
 
@@ -48,13 +53,32 @@ public class EffectDoor : MonoBehaviour
         {
             AudioClip clip = keysCollected >= LayoutTiles.KEY_COUNT ? allCollectedSound : collectedSound;
             AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, 0.5F);
-            DOTween.To(() => 1, x => { }, 0F, clip.length).OnComplete(() =>
+
+            if (keysCollected < LayoutTiles.KEY_COUNT)
             {
-                Mage.instance.gameObject.SetActive(true);
-                worldAnchor.SetActive(true);
-                simulationCamera.gameObject.SetActive(false);
-                gameUI.gameObject.SetActive(true);
-            });
+                DOTween.To(() => 1, x => { }, 0F, clip.length).OnComplete(() =>
+                {
+                    Mage.instance.gameObject.SetActive(true);
+                    worldAnchor.SetActive(true);
+                    simulationCamera.gameObject.SetActive(false);
+                    gameUI.gameObject.SetActive(true);
+                });
+            }
+            else
+            {
+                if (particles)
+                {
+                    particles.Play();
+                    DOTween.To(() => 1, x => { }, 0F, clip.length * 0.6F).OnComplete(() => particles.Stop());
+                }
+                background.transform.DOMove(background.transform.position + Vector3.down, clip.length).OnComplete(() =>
+                {
+                    Mage.instance.gameObject.SetActive(true);
+                    worldAnchor.SetActive(true);
+                    simulationCamera.gameObject.SetActive(false);
+                    gameUI.gameObject.SetActive(true);
+                });
+            }
         });
     }
 }

@@ -66,7 +66,7 @@ public class LayoutTiles : MonoBehaviour
     /// </summary>
     /// <param name="name">The name of the texture</param>
     /// <returns>Requested texture or null</returns>
-    public Texture2D GetTileTexture(string name)
+    public Texture2D GetTileTexture(string name, bool dither)
     {
         TileTexture tt = tileTextures.Where(x => x.name == name).FirstOrDefault();
         if (tt == null)
@@ -74,7 +74,7 @@ public class LayoutTiles : MonoBehaviour
 
         Texture2D texture = tt.texture;
 
-        if (tt.ditherTex != null && tt.ditherTex.Length > 0 && Random.value <= tt.ditherChance)
+        if (dither && tt.ditherTex != null && tt.ditherTex.Length > 0 && Random.value <= tt.ditherChance)
         {
             texture = tt.ditherTex[Random.Range(0, tt.ditherTex.Length)];
         }
