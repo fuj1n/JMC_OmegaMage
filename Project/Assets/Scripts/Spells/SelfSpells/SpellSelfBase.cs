@@ -24,6 +24,9 @@ public abstract class SpellSelfBase : SpellBase
 
     protected virtual void Update()
     {
+        if (fadeTime == 0F)
+            return;
+
         float elapsed = Mathf.Clamp01((Time.time - startTime) / effectLength);
 
         if (fadeAnimation)

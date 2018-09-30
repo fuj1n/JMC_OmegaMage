@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 5400000}
   - component: {fileID: 13600000}
   - component: {fileID: 114868466967880242}
+  - component: {fileID: 114292520082354782}
   m_Layer: 0
   m_Name: _Mage
   m_TagString: Mage
@@ -741,6 +742,19 @@ Transform:
   m_Father: {fileID: 400016}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114292520082354782
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f815966a41f1df42b1538ab3066a924, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invincibilitySpell: {fileID: 114989216436559900, guid: a436e2028cda54b409b21b00dc9152d7,
+    type: 2}
 --- !u!114 &114868466967880242
 MonoBehaviour:
   m_ObjectHideFlags: 1

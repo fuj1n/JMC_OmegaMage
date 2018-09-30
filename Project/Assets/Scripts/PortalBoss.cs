@@ -25,12 +25,6 @@ public class PortalBoss : Portal
         UpdateState();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Z))
-            KeyCollected(Random.Range(0, 99999999));
-    }
-
     protected override void OnPortalEntered()
     {
         if (keysCollected.Count >= LayoutTiles.KEY_COUNT)
