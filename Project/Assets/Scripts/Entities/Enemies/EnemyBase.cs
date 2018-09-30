@@ -49,6 +49,23 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 
         if (immobilizationAgents.Count == 0)
             DoAI();
+
+        RaycastHit[] hits = Physics.BoxCastAll(transform.position, Vector3.one * .4F, Vector3.back);
+        float highest = 0F;
+
+        foreach (RaycastHit hit in hits)
+        {
+            Tile t = hit.collider.GetComponent<Tile>();
+
+            if (t && t.height <= .25F)
+            {
+                highest = Mathf.Max(highest, t.height);
+            }
+        }
+
+        Vector3 pos = transform.position;
+        pos.z = -(highest + .1F);
+        transform.position = pos;
     }
 
     private void LateUpdate()

@@ -21,6 +21,11 @@ public class EnemySpiker : EnemyBase
 
         if (go.tag == "Ground")
         {
+            Tile t = go.GetComponent<Tile>();
+
+            if (!t || t.height <= .25F)
+                return;
+
             float dot = Vector3.Dot(moveDirection, go.transform.position - transform.position);
             if (dot > 0)
                 moveDirection *= -1;
