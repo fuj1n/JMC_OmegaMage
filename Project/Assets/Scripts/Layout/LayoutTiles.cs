@@ -191,7 +191,7 @@ public class LayoutTiles : MonoBehaviour
                         }
                         break;
                     default:
-                        if (roomsData.portals.Contains(rawType))
+                        if (roomsData.rooms.ContainsKey(rawType))
                         {
                             GameObject portalTemplate = this.portal;
                             if (roomsData.customPortals.ContainsKey(rawType))

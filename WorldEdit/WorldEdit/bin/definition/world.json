@@ -2,8 +2,8 @@
 	"portal": "portal.png",
 	"keys": {
 		" ": "$blank",
-		".": "dirt.png",
-		"|": "stone.png",
+		".": "$floor",
+		"|": "$wall",
 		"-": "invisible.png",
 		"b": "bug.png",
 		"<": "spiker.png",
@@ -34,5 +34,9 @@
 		"a": "Air Unlock",
 		"w": "Water Unlock",
 		"X": "Spawn"
+	},
+	"tags":{
+		"dirt": "dirt.png",
+		"stone": "stone.png"
 	}
 }

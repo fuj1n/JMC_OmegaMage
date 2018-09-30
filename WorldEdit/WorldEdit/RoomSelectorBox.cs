@@ -2,9 +2,9 @@
 
 namespace WorldEdit
 {
-    public partial class PortalSelectorBox : Form
+    public partial class RoomSelectorBox : Form
     {
-        public PortalSelectorBox()
+        public RoomSelectorBox()
         {
             InitializeComponent();
             text.KeyPress += (s, e) => { if (e.KeyChar == (char)Keys.Return) { selectbutton.PerformClick(); e.Handled = true; } };

@@ -1,6 +1,6 @@
 ﻿namespace WorldEdit
 {
-    partial class PortalSelectorBox
+    partial class RoomSelectorBox
     {
         /// <summary>
         /// Required designer variable.
@@ -41,7 +41,7 @@
             label.Name = "label";
             label.Size = new System.Drawing.Size(379, 14);
             label.TabIndex = 0;
-            label.Text = "Please select a portal letter";
+            label.Text = "Please select a room letter";
             label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // selectbutton
@@ -66,7 +66,7 @@
             this.text.TabIndex = 1;
             this.text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // PortalSelectorBox
+            // RoomSelectorBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -77,7 +77,7 @@
             this.Controls.Add(label);
             this.ForeColor = System.Drawing.SystemColors.Control;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "PortalSelectorBox";
+            this.Name = "RoomSelectorBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OmegaMage World Editor";
             this.ResumeLayout(false);

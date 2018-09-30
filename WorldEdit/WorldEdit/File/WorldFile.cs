@@ -14,6 +14,7 @@ namespace WorldEdit
         public string background;
         public Dictionary<char, string> keys;
         public Dictionary<char, string> labels;
+        public Dictionary<string, string> tags;
 
         [JsonIgnore]
         public Bitmap missingno;
@@ -21,12 +22,13 @@ namespace WorldEdit
         public Bitmap blank = new Bitmap(32, 32);
 
         private Dictionary<string, Image> textures = new Dictionary<string, Image>();
+        private Room defaultRoom = new Room();
 
         public void LoadTextures(string directory)
         {
-            foreach (string texture in keys.Select(x => x.Value))
+            foreach (string texture in keys.Select(x => x.Value).Concat(tags.Select(x => x.Value)))
             {
-                if (texture == "$blank" || textures.ContainsKey(texture))
+                if (texture.StartsWith("$") || textures.ContainsKey(texture))
                     continue;
 
                 LoadTexture(texture, directory);
@@ -73,6 +75,14 @@ namespace WorldEdit
         {
             if (texture == "$blank")
                 return blank;
+            // Done so the palette works correctly
+            else if (texture == "$wall")
+                texture = tags[defaultRoom.wall];
+            else if (texture == "$floor")
+                texture = tags[defaultRoom.floor];
+
+            if (!textures.ContainsKey(texture) && tags.ContainsKey(texture))
+                texture = tags[texture];
 
             if (!textures.ContainsKey(texture))
                 return missingno;
