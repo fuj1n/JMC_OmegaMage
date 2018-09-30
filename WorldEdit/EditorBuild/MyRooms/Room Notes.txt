@@ -1,0 +1,16 @@
+0: (spawn)
+	Wall 2 is half height
+	Portal to room 1
+1: 
+	Left portal to room 0, right portal to room 2
+2:
+	Left portal to room 1, right portal to room 3
+3: 
+	Swap floor textures
+	Floor 1 is raised by .25
+	Left portal to room 2, right portal to room 4
+4:
+	Floor 1 is wood
+	Floor 2 is raised by .1
+	Left portal to room 3, Right portal to room F (boss room)
+	Top portal to room 5, bottom portal to room 6

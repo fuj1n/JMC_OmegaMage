@@ -99,6 +99,13 @@ public class Mage : MonoBehaviour
     private float thornsMultiplier;
     private ElementType thornsType;
 
+    private List<string> hitPriority = new List<string>()
+    {
+        "Enemy",
+        "Mage",
+        "Ground"
+    };
+
     private void Awake()
     {
         instance = this;
@@ -350,14 +357,42 @@ public class Mage : MonoBehaviour
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDown()");
 
-        GameObject clicked = mouseInfoBuffer.FirstOrDefault().hitInfo.collider.gameObject;
-        GameObject taggedParent = Utils.FindTaggedParent(clicked);
-        if (!taggedParent)
+        GameObject[] clicked = mouseInfoBuffer.FirstOrDefault().hitBox.Select(x => x.collider.gameObject).ToArray();
+        GameObject objective = null;
+
+        // Get all clicked objects and prioritize them according to the priority array
+        foreach (GameObject ob in clicked)
+        {
+            GameObject taggedParent = Utils.FindTaggedParent(ob);
+
+            if (!taggedParent)
+                continue;
+
+            if (!hitPriority.Contains(taggedParent.tag))
+                continue;
+
+            if (!objective)
+            {
+                objective = taggedParent;
+                continue;
+            }
+
+            int priorityCurrent = hitPriority.IndexOf(taggedParent.tag);
+            int priorityOld = hitPriority.IndexOf(objective.tag);
+
+            if (priorityCurrent < priorityOld)
+                objective = taggedParent;
+
+        }
+
+        //GameObject clicked = mouseInfoBuffer.FirstOrDefault().hitInfo.collider.gameObject;
+        //GameObject taggedParent = Utils.FindTaggedParent(clicked);
+        if (!objective)
             actionStartTag = "";
         else
         {
-            actionStartObject = taggedParent;
-            actionStartTag = taggedParent.tag;
+            actionStartObject = objective;
+            actionStartTag = objective.tag;
         }
     }
 
@@ -388,10 +423,11 @@ public class Mage : MonoBehaviour
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDrag()");
 
-        if (actionStartTag != "Ground" && GetSelectedElement() != ElementType.NONE)
-            return;
+        // If I start dragging from the enemy or the player, it shouldn't matter
+        //if (actionStartTag == "Ground" && GetSelectedElement() != ElementType.NONE)
+        //    return;
 
-        if (selectedElements.Count == 0)
+        if (GetSelectedElement() == ElementType.NONE)
             WalkTo(mouseInfoBuffer.LastOrDefault().position);
         else
         {
@@ -403,9 +439,9 @@ public class Mage : MonoBehaviour
     {
         this.ConditionalLog(DEBUG, "Mage.MouseDragUp()");
 
-        if (actionStartTag != "Ground") return;
+        //if (actionStartTag != "Ground") return;
 
-        if (selectedElements.Count == 0)
+        if (GetSelectedElement() == ElementType.NONE)
             StopWalking();
         else
         {
@@ -751,12 +787,14 @@ public class MouseInfo
     public float time;
 
     public RaycastHit hitInfo;
+    public RaycastHit[] hitBox;
     public bool hit;
 
     /// <returns>True if the mouse ray hits anything</returns>
     public RaycastHit Raycast()
     {
         hit = Physics.Raycast(ray, out hitInfo);
+        hitBox = Physics.BoxCastAll(ray.origin, Vector3.one * .2F, ray.direction);
         return hitInfo;
     }
 
