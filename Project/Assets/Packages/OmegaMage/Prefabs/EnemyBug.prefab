@@ -1633,5 +1633,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
-  speed: 0.5
   maxHealth: 10
+  doDrops: 1
+  drop: {fileID: 1459812187195412, guid: 916be9df0e4128644b55fa684bb7eb1f, type: 2}
+  minDrops: 5
+  maxDrops: 30
+  speed: 0.5

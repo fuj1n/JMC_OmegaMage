@@ -8,7 +8,16 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     public float damage;
     public float maxHealth;
 
-    protected new Rigidbody rigidbody
+    [Header("Drops")]
+    public bool doDrops = false;
+    [ConditionalHide(true, ConditionalSourceField = "doDrops")]
+    public GameObject drop;
+    [ConditionalHide(true, ConditionalSourceField = "doDrops")]
+    public int minDrops = 5;
+    [ConditionalHide(true, ConditionalSourceField = "doDrops")]
+    public int maxDrops = 30;
+
+    protected Rigidbody Rigidbody
     {
         get
         {
@@ -38,7 +47,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
     {
         if (knockbackTime > 0F)
         {
-            rigidbody.velocity = knockbackDirection * (knockbackDistance / knockbackDuration);
+            Rigidbody.velocity = knockbackDirection * (knockbackDistance / knockbackDuration);
             knockbackTime -= Time.fixedDeltaTime;
 
             return;
@@ -131,6 +140,10 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 
     public virtual void Die()
     {
+        if (doDrops)
+            for (int i = 0; i < Random.Range(minDrops, maxDrops + 1); i++)
+                Instantiate(drop, transform.position, drop.transform.rotation);
+
         Destroy(gameObject);
     }
 
@@ -150,7 +163,7 @@ public abstract class EnemyBase : MonoBehaviour, IEnemy
 
     public virtual void OnImmobilized()
     {
-        if (rigidbody)
-            rigidbody.velocity = Vector3.zero;
+        if (Rigidbody)
+            Rigidbody.velocity = Vector3.zero;
     }
 }

@@ -781,12 +781,6 @@ MonoBehaviour:
   elementRotationDistance: 0.5
   elementRotationSpeed: 0.5
   maxNumSelectedElements: 1
-  elementColors:
-  - {r: 0, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0.11764706, b: 1, a: 1}
-  - {r: 0, g: 1, b: 1, a: 1}
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
   elementRecoverPerSecond: 6400000064000000640000006400000040420f00
   lineMinDelta: 0.1
   lineMaxDelta: 0.5
@@ -805,6 +799,18 @@ MonoBehaviour:
   - {fileID: 1080558752307774, guid: 3b5372b53ebdff84e8e5eda4d5bf10fe, type: 2}
   - {fileID: 1889693276340684, guid: a436e2028cda54b409b21b00dc9152d7, type: 2}
   - {fileID: 1954723813086660, guid: 17d9d55e9152ce84686abe13b59aaeac, type: 2}
+  elementColors:
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.11764706, b: 1, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
+  elementSprites:
+  - {fileID: 21300000, guid: 75f1c643a4478594cb6958a836de2d45, type: 3}
+  - {fileID: 21300000, guid: 38149bfae8b5de741a9707fe8bd09e51, type: 3}
+  - {fileID: 21300000, guid: 8ec83c1feb6261643813485f7d6451f4, type: 3}
+  - {fileID: 21300000, guid: f93d04df3bbdf9c4eaffa680ef5f83b8, type: 3}
+  - {fileID: 21300000, guid: cf5f5e91028387f4bba7f37244b522e2, type: 3}
   maxHealth: 4
   knockbackDistance: 1
   knockbackDuration: 0.5

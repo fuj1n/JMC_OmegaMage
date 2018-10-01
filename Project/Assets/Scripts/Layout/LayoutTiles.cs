@@ -36,6 +36,13 @@ public class LayoutTiles : MonoBehaviour
     public TypeTemplatePair[] entityTemplates = { };
 
     private Tile[,] tiles;
+    public Transform WorldAnchor
+    {
+        get
+        {
+            return tileAnchor;
+        }
+    }
     private Transform tileAnchor;
 
     private bool firstRoom = true;

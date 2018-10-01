@@ -457,6 +457,11 @@ Prefab:
       propertyPath: m_Name
       value: Mage
       objectReference: {fileID: 0}
+    - target: {fileID: 114868466967880242, guid: 06d786368719c4ecd931c5fc5fd9bd73,
+        type: 2}
+      propertyPath: unlockAll
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d786368719c4ecd931c5fc5fd9bd73, type: 2}
   m_IsPrefabAsset: 0

@@ -43,7 +43,6 @@ public class Mage : MonoBehaviour
     public float elementRotationSpeed = 0.5F;
     public int maxNumSelectedElements = 1;
 
-    public Color[] elementColors = { };
     public int[] elementRecoverPerSecond = { };
 
     public float lineMinDelta = 0.1F;
@@ -52,6 +51,10 @@ public class Mage : MonoBehaviour
 
     public GameObject[] spells = { };
     private Dictionary<ElementType, Dictionary<SpellTargetType, ISpell>> spellCache = new Dictionary<ElementType, Dictionary<SpellTargetType, ISpell>>();
+
+    [Header("Element Appearance")]
+    public Color[] elementColors = { };
+    public Sprite[] elementSprites = { };
 
     [Header("Health")]
     public float maxHealth = 4F;
@@ -338,12 +341,14 @@ public class Mage : MonoBehaviour
 
     private MouseInfo AddMouseInfo()
     {
-        MouseInfo info = new MouseInfo();
-        info.screenPos = Input.mousePosition;
-        info.position = Utils.mouseLoc;
-        info.ray = Utils.mouseRay;
+        MouseInfo info = new MouseInfo
+        {
+            screenPos = Input.mousePosition,
+            position = Utils.mouseLoc,
+            ray = Utils.mouseRay,
 
-        info.time = Time.time;
+            time = Time.time
+        };
         info.Raycast();
 
 
@@ -738,6 +743,8 @@ public class Mage : MonoBehaviour
             System.Array.Resize(ref elementRecoverPerSecond, System.Enum.GetValues(typeof(ElementType)).Length);
         if (elementColors.Length != System.Enum.GetValues(typeof(ElementType)).Length)
             System.Array.Resize(ref elementColors, System.Enum.GetValues(typeof(ElementType)).Length);
+        if (elementSprites.Length != System.Enum.GetValues(typeof(ElementType)).Length)
+            System.Array.Resize(ref elementSprites, System.Enum.GetValues(typeof(ElementType)).Length);
     }
 
     public void MapChange()

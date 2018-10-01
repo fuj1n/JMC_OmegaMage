@@ -3,7 +3,6 @@
 [EntityFactory('f', 'e', 'a', 'w')]
 public class EntityUnlockElement : MonoBehaviour, IEntity
 {
-    public Sprite[] elementalSprites;
     public Vector3 rotateSpeed;
 
     public AudioClip pickupSound;
@@ -51,7 +50,7 @@ public class EntityUnlockElement : MonoBehaviour, IEntity
 
         effect = transform.GetChild(0);
 
-        effect.GetComponent<SpriteRenderer>().sprite = elementalSprites[(int)element];
+        effect.GetComponent<SpriteRenderer>().sprite = Mage.instance.elementSprites[(int)element];
         effect.GetComponent<Light>().color = Mage.instance.elementColors[(int)element];
     }
 }
