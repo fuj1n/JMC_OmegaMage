@@ -93,10 +93,6 @@ namespace WorldEdit
                 texture = tags[defaultRoom.wall];
             else if (texture == "$floor")
                 texture = tags[defaultRoom.floor];
-            else if (texture == "$wall2")
-                texture = tags[defaultRoom.wall2];
-            else if (texture == "$floor2")
-                texture = tags[defaultRoom.floor2];
 
             if (!textures.ContainsKey(texture) && tags.ContainsKey(texture))
                 texture = tags[texture];

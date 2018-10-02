@@ -102,14 +102,7 @@ namespace WorldEdit
                     rd.RoomId = currentRoomId;
 
                     rd.floor.Text = roomsData[currentRoomId].floor;
-                    rd.floor2.Text = roomsData[currentRoomId].floor2;
                     rd.wall.Text = roomsData[currentRoomId].wall;
-                    rd.wall2.Text = roomsData[currentRoomId].wall2;
-
-                    rd.floorHeight.Value = (decimal)roomsData[currentRoomId].floorHeight;
-                    rd.floor2Height.Value = (decimal)roomsData[currentRoomId].floor2Height;
-                    rd.wallHeight.Value = (decimal)roomsData[currentRoomId].wallHeight;
-                    rd.wall2Height.Value = (decimal)roomsData[currentRoomId].wall2Height;
 
                     if (rd.ShowDialog() == DialogResult.OK)
                     {
@@ -119,15 +112,6 @@ namespace WorldEdit
                             roomsData[currentRoomId].floor = rd.floor.Text;
                         if (!string.IsNullOrWhiteSpace(rd.wall.Text))
                             roomsData[currentRoomId].wall = rd.wall.Text;
-                        if (!string.IsNullOrWhiteSpace(rd.floor2.Text))
-                            roomsData[currentRoomId].floor2 = rd.floor2.Text;
-                        if (!string.IsNullOrWhiteSpace(rd.wall2.Text))
-                            roomsData[currentRoomId].wall2 = rd.wall2.Text;
-
-                        roomsData[currentRoomId].floorHeight = (float)rd.floorHeight.Value;
-                        roomsData[currentRoomId].floor2Height = (float)rd.floor2Height.Value;
-                        roomsData[currentRoomId].wallHeight = (float)rd.wallHeight.Value;
-                        roomsData[currentRoomId].wall2Height = (float)rd.wall2Height.Value;
 
                         SoftUpdateWorld();
                     }
@@ -136,19 +120,20 @@ namespace WorldEdit
 
             btnWorldProperties.Click += (o, e) =>
             {
-                using (WorldPropertiesEditor wpe = new WorldPropertiesEditor())
-                {
-                    wpe.CustomPortals = customPortals;
-                    wpe.startingRoom.Text = startingRoom.ToString();
+                MessageBox.Show("This feature is not available in the tutorial version of the world editor");
+                //using (WorldPropertiesEditor wpe = new WorldPropertiesEditor())
+                //{
+                //    wpe.CustomPortals = customPortals;
+                //    wpe.startingRoom.Text = startingRoom.ToString();
 
-                    if (wpe.ShowDialog() == DialogResult.OK)
-                    {
-                        if (!string.IsNullOrWhiteSpace(wpe.startingRoom.Text))
-                            startingRoom = wpe.startingRoom.Text[0];
+                //    if (wpe.ShowDialog() == DialogResult.OK)
+                //    {
+                //        if (!string.IsNullOrWhiteSpace(wpe.startingRoom.Text))
+                //            startingRoom = wpe.startingRoom.Text[0];
 
-                        customPortals = wpe.CustomPortals;
-                    }
-                }
+                //        customPortals = wpe.CustomPortals;
+                //    }
+                //}
             };
 
             btnLoadImage.Click += (o, e) =>
@@ -215,86 +200,75 @@ namespace WorldEdit
 
         public WorldEditor(string path) : this()
         {
-            try
+            //try
+            //{
+            RoomsFile rf = XMLAdapter.LoadRoomsFile(File.ReadAllText(path));
+
+            roomsData = new Dictionary<char, Room>(rf.rooms);
+            rooms.Clear();
+
+            foreach (KeyValuePair<char, Room> room in roomsData)
             {
-                RoomsFile rf = JsonConvert.DeserializeObject<RoomsFile>(File.ReadAllText(path));
+                List<List<char>> roomsTable = new List<List<char>>();
 
-                customPortals = rf.customPortals;
-                startingRoom = rf.startingRoom;
-                roomsData = new Dictionary<char, Room>(rf.rooms);
-                rooms.Clear();
-
-                foreach (KeyValuePair<char, Room> room in roomsData)
+                foreach (string row in room.Value.layout.Trim('\n').Split('\n').Select(r => r.Trim('\t', '\r')))
                 {
-                    List<List<char>> roomsTable = new List<List<char>>();
-
-                    foreach (string row in room.Value.layout.Trim('\n').Split('\n').Select(r => r.Trim('\t', '\r')))
-                    {
-                        roomsTable.Add(row.ToList());
-                    }
-
-                    rooms[room.Key] = roomsTable;
+                    roomsTable.Add(row.ToList());
                 }
 
-                currentRoomId = '\0';
-                SelectRoom(startingRoom);
+                rooms[room.Key] = roomsTable;
             }
-            catch (Exception e)
-            {
-                Console.WriteLineFormatted("Cannot read \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, path);
-            }
+
+            currentRoomId = '\0';
+            SelectRoom(startingRoom);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLineFormatted("Cannot read \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, path);
+            //}
         }
 
         private void Save()
         {
-            try
+            //try
+            //{
+            if (saveWorldDialog.ShowDialog() == DialogResult.OK)
             {
-                if (saveWorldDialog.ShowDialog() == DialogResult.OK)
+                SelectRoom('\0');
+
+                RoomsFile roomsFile = new RoomsFile();
+                roomsData = roomsData.Where(d => rooms.ContainsKey(d.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                foreach (KeyValuePair<char, List<List<char>>> room in rooms)
                 {
-                    SelectRoom('\0');
+                    if (!roomsData.ContainsKey(room.Key))
+                        roomsData[room.Key] = new Room();
 
-                    RoomsFile roomsFile = new RoomsFile();
-                    roomsData = roomsData.Where(d => rooms.ContainsKey(d.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-                    roomsFile.customPortals = customPortals;
-                    roomsFile.startingRoom = startingRoom;
-
-                    int maxSize = 0;
-
-                    foreach (KeyValuePair<char, List<List<char>>> room in rooms)
+                    // Sanitize the room layout to be uniform width and height
+                    int highestColumnCount = 0;
+                    room.Value.ForEach(row => highestColumnCount = Math.Max(highestColumnCount, row.Count));
+                    room.Value.ForEach(row =>
                     {
-                        if (!roomsData.ContainsKey(room.Key))
-                            roomsData[room.Key] = new Room();
+                        while (row.Count < highestColumnCount)
+                            row.Add(' ');
+                    });
 
-                        // Sanitize the room layout to be uniform width and height
-                        int highestColumnCount = 0;
-                        room.Value.ForEach(row => highestColumnCount = Math.Max(highestColumnCount, row.Count));
-                        room.Value.ForEach(row =>
-                        {
-                            while (row.Count < highestColumnCount)
-                                row.Add(' ');
-                        });
-
-                        // Find the biggest room dimension
-                        maxSize = Math.Max(maxSize, Math.Max(room.Value.Count, highestColumnCount));
-
-                        roomsData[room.Key].layout = "\n";
-                        room.Value.ForEach(row => roomsData[room.Key].layout += string.Join("", row) + "\n");
-                        roomsData[room.Key].layout = roomsData[room.Key].layout.TrimEnd('\n', '\r');
-                    }
-
-                    roomsFile.roomSize = maxSize;
-                    roomsFile.rooms = new SortedDictionary<char, Room>(roomsData);
-
-                    File.WriteAllText(saveWorldDialog.FileName, JsonConvert.SerializeObject(roomsFile, Formatting.Indented).Replace("\\n", "\n"));
-
-                    SelectRoom(startingRoom);
+                    roomsData[room.Key].layout = "\n";
+                    room.Value.ForEach(row => roomsData[room.Key].layout += string.Join("", row) + "\n");
+                    roomsData[room.Key].layout = roomsData[room.Key].layout.TrimEnd('\n', '\r');
                 }
+
+                roomsFile.rooms = new SortedDictionary<char, Room>(roomsData);
+
+                File.WriteAllText(saveWorldDialog.FileName, XMLAdapter.WriteRoomsFile(roomsFile).Replace("\\n", "\n"));
+
+                SelectRoom(startingRoom);
             }
-            catch (Exception e)
-            {
-                Console.WriteLineFormatted("Cannot write \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, "file");
-            }
+            //}
+            //    catch (Exception e)
+            //    {
+            //        Console.WriteLineFormatted("Cannot write \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, "file");
+            //    }
         }
 
         private bool SelectPalette(object o)
@@ -564,12 +538,6 @@ namespace WorldEdit
                         break;
                     case "floor":
                         tex = roomsData[currentRoomId].floor;
-                        break;
-                    case "wall2":
-                        Text = roomsData[currentRoomId].wall2;
-                        break;
-                    case "floor2":
-                        tex = roomsData[currentRoomId].floor2;
                         break;
                 }
 

@@ -60,7 +60,7 @@
             // openWorldDialog
             // 
             this.openWorldDialog.DefaultExt = "json";
-            this.openWorldDialog.Filter = "World Files|*.json";
+            this.openWorldDialog.Filter = "World Files|*.xml";
             this.openWorldDialog.Title = "Please select a world file";
             // 
             // btnExport
@@ -91,7 +91,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "StartMenu";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OmegaMage - World Edit";
+            this.Text = "OmegaMage - World Editor - Tutorial Edition";
             this.ResumeLayout(false);
 
         }

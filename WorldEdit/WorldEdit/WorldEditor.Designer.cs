@@ -376,7 +376,7 @@
             // saveWorldDialog
             // 
             this.saveWorldDialog.DefaultExt = "json";
-            this.saveWorldDialog.Filter = "World Files|*.json";
+            this.saveWorldDialog.Filter = "World Files|*.xml";
             this.saveWorldDialog.Title = "Please select a world file";
             // 
             // openImageDialog
@@ -398,7 +398,7 @@
             this.MinimumSize = new System.Drawing.Size(816, 489);
             this.Name = "WorldEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "OmegaMage World Editor";
+            this.Text = "OmegaMage World Editor - Tutorial Edition";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             tableLayoutPanel1.ResumeLayout(false);
             this.paletteTable.ResumeLayout(false);

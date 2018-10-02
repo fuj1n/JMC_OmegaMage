@@ -79,7 +79,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "RoomSelectorBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OmegaMage World Editor";
+            this.Text = "OmegaMage World Editor - Tutorial Edition";
             this.ResumeLayout(false);
             this.PerformLayout();
 
