@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace WorldEdit
@@ -19,9 +20,7 @@ namespace WorldEdit
 
         private void LoadWorld(object sender, EventArgs e)
         {
-            DialogResult result = openWorldDialog.ShowDialog(this);
-
-            if (result == DialogResult.OK)
+            if (openWorldDialog.ShowDialog(this) == DialogResult.OK)
             {
                 new WorldEditor(openWorldDialog.FileName).ShowDialog(this);
             }
@@ -54,6 +53,20 @@ namespace WorldEdit
                 f.Dispose(); // Dispose of the font
                 g.Dispose(); // Dispose of the graphics
                 bitmap.Dispose(); // Dispose of bitmap
+            }
+        }
+
+        private void LoadFolder(object sender, EventArgs e)
+        {
+            if (loadFolderDialog.ShowDialog() == DialogResult.OK)
+            {
+                var files = Directory.GetFiles(loadFolderDialog.SelectedPath, "*.png", SearchOption.AllDirectories);
+                string roomsData = Path.Combine(loadFolderDialog.SelectedPath, "RoomsData.json");
+
+                if (File.Exists(roomsData))
+                    new WorldEditor(roomsData, files).ShowDialog(this);
+                else
+                    new WorldEditor(files).ShowDialog(this);
             }
         }
     }

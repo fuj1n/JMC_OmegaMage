@@ -33,6 +33,8 @@
             this.openWorldDialog = new System.Windows.Forms.OpenFileDialog();
             this.btnExport = new System.Windows.Forms.Button();
             this.saveColorsDialog = new System.Windows.Forms.SaveFileDialog();
+            this.btnLoadFolder = new System.Windows.Forms.Button();
+            this.loadFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
             // btnNew
@@ -78,12 +80,28 @@
             // 
             this.saveColorsDialog.Filter = "Image Files|*.png";
             // 
+            // btnLoadFolder
+            // 
+            this.btnLoadFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLoadFolder.Location = new System.Drawing.Point(12, 150);
+            this.btnLoadFolder.Name = "btnLoadFolder";
+            this.btnLoadFolder.Size = new System.Drawing.Size(300, 40);
+            this.btnLoadFolder.TabIndex = 3;
+            this.btnLoadFolder.Text = "Load Folder as World";
+            this.btnLoadFolder.UseVisualStyleBackColor = true;
+            this.btnLoadFolder.Click += new System.EventHandler(this.LoadFolder);
+            // 
+            // loadFolderDialog
+            // 
+            this.loadFolderDialog.ShowNewFolderButton = false;
+            // 
             // StartMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(322, 151);
+            this.ClientSize = new System.Drawing.Size(322, 201);
+            this.Controls.Add(this.btnLoadFolder);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.btnNew);
@@ -103,5 +121,7 @@
         private System.Windows.Forms.OpenFileDialog openWorldDialog;
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.SaveFileDialog saveColorsDialog;
+        private System.Windows.Forms.Button btnLoadFolder;
+        private System.Windows.Forms.FolderBrowserDialog loadFolderDialog;
     }
 }

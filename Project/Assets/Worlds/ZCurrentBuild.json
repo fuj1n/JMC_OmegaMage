@@ -226,7 +226,7 @@
       "wall": "stone",
       "wall2": "wood",
       "floorHeight": 0.0,
-      "floor2Height": 1.0,
+      "floor2Height": 0.0,
       "wallHeight": 1.0,
       "wall2Height": 0.5,
       "layout": "
@@ -256,7 +256,7 @@
       "wall": "stone",
       "wall2": "wood",
       "floorHeight": 0.0,
-      "floor2Height": 1.0,
+      "floor2Height": 0.0,
       "wallHeight": 1.0,
       "wall2Height": 0.5,
       "layout": "

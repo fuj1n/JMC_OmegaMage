@@ -1,0 +1,10 @@
+{
+	"floor": "tile",
+	"floor2": "dirt",
+	"wall": "stone",
+	"wall2": "wood",
+	"floorHeight": 0,
+	"floor2Height": 0,
+	"wallHeight": 1,
+	"wall2Height": 1
+}

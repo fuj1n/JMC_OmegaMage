@@ -155,32 +155,7 @@ namespace WorldEdit
             {
                 if (openImageDialog.ShowDialog() == DialogResult.OK)
                 {
-                    try
-                    {
-                        // Workaround for bug in GDI+
-                        using (Bitmap image = new Bitmap(openImageDialog.FileName))
-                        {
-                            SetSize(image.Width, image.Height, false);
-
-                            for (int y = 0; y < image.Height; y++)
-                            {
-                                for (int x = 0; x < image.Width; x++)
-                                {
-                                    int pixel = image.GetPixel(x, y).ToArgb();
-                                    if (World.imageCodesConverted.ContainsKey(pixel))
-                                        currentRoom[y][x] = World.imageCodesConverted[pixel];
-                                    else
-                                        currentRoom[y][x] = ' ';
-                                }
-                            }
-
-                            UpdateWorld();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLineFormatted("Cannot read \"{0}\" + (" + ex.GetType().Name + ")", Color.Green, Color.DarkRed, openImageDialog.FileName);
-                    }
+                    LoadImage(openImageDialog.FileName);
                 }
             };
 
@@ -213,7 +188,7 @@ namespace WorldEdit
             UpdateWorld();
         }
 
-        public WorldEditor(string path) : this()
+        public WorldEditor(string path, bool alternate = false) : this()
         {
             try
             {
@@ -224,24 +199,112 @@ namespace WorldEdit
                 roomsData = new Dictionary<char, Room>(rf.rooms);
                 rooms.Clear();
 
-                foreach (KeyValuePair<char, Room> room in roomsData)
+                if (!alternate)
                 {
-                    List<List<char>> roomsTable = new List<List<char>>();
-
-                    foreach (string row in room.Value.layout.Trim('\n').Split('\n').Select(r => r.Trim('\t', '\r')))
+                    foreach (KeyValuePair<char, Room> room in roomsData)
                     {
-                        roomsTable.Add(row.ToList());
+                        List<List<char>> roomsTable = new List<List<char>>();
+
+                        foreach (string row in room.Value.layout.Trim('\n').Split('\n').Select(r => r.Trim('\t', '\r')))
+                        {
+                            roomsTable.Add(row.ToList());
+                        }
+
+                        rooms[room.Key] = roomsTable;
                     }
 
-                    rooms[room.Key] = roomsTable;
+                    currentRoomId = '\0';
+                    SelectRoom(startingRoom);
                 }
-
-                currentRoomId = '\0';
-                SelectRoom(startingRoom);
             }
             catch (Exception e)
             {
                 Console.WriteLineFormatted("Cannot read \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, path);
+            }
+        }
+
+        public WorldEditor(string[] images) : this()
+        {
+            LoadImages(images);
+        }
+
+        public WorldEditor(string path, string[] images) : this(path, true)
+        {
+            LoadImages(images);
+        }
+
+        public void LoadImages(string[] images)
+        {
+            currentRoomId = '\0';
+            foreach (string path in images)
+            {
+                try
+                {
+                    char roomId = Path.GetFileNameWithoutExtension(path)[0];
+
+                    CreateRoom(roomId);
+                    LoadImage(path, false);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLineFormatted("Cannot read \"{0}\" + (" + e.GetType().Name + ")", Color.Green, Color.DarkRed, path);
+                }
+            }
+
+            UpdateWorld();
+        }
+
+        public void LoadImage(string path, bool updateWorld = true)
+        {
+            try
+            {
+                using (Bitmap image = new Bitmap(path))
+                {
+                    if (File.Exists(Path.ChangeExtension(path, "json")))
+                    {
+                        try
+                        {
+                            Room room = JsonConvert.DeserializeObject<Room>(File.ReadAllText(Path.ChangeExtension(path, "json")));
+
+                            roomsData[currentRoomId] = room;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLineFormatted("Cannot read \"{0}\" + (" + ex.GetType().Name + ")", Color.Green, Color.DarkRed, path);
+                        }
+                    }
+
+                    SetSize(image.Width, image.Height, false);
+
+                    for (int y = 0; y < image.Height; y++)
+                    {
+                        for (int x = 0; x < image.Width; x++)
+                        {
+                            int pixel = image.GetPixel(x, y).ToArgb();
+
+                            // If the color code is #AAAAnn
+                            if (pixel.ToString("X").StartsWith("FFAAAA"))
+                            {
+                                Color cp = image.GetPixel(x, y);
+                                char portalId = (char)cp.B;
+                                currentRoom[y][x] = portalId;
+                                continue;
+                            }
+
+                            if (World.imageCodesConverted.ContainsKey(pixel))
+                                currentRoom[y][x] = World.imageCodesConverted[pixel];
+                            else
+                                currentRoom[y][x] = ' ';
+                        }
+                    }
+
+                    if (updateWorld)
+                        UpdateWorld();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLineFormatted("Cannot read \"{0}\" + (" + ex.GetType().Name + ")", Color.Green, Color.DarkRed, path);
             }
         }
 
