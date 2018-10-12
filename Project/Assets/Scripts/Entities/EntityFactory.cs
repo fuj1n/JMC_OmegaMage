@@ -19,7 +19,7 @@ public class EntityFactory
             return null;
 
         GameObject instance = GameObject.Instantiate(template);
-        IEntity entity = (IEntity)instance.GetComponent(entities[type]);
+        IEntity entity = (IEntity)instance.GetComponentInChildren(entities[type]);
         if (entity == null)
             entity = (IEntity)instance.AddComponent(entities[type]);
 

@@ -16,11 +16,14 @@ public class SpellAttach : SpellBase
     private float startTime;
 
     private Transform target;
+    private IEnemy targetEnemy;
 
     private void Start()
     {
         startTime = Time.time;
         duration = Random.Range(duration - durationVariance, duration + durationVariance);
+
+        targetEnemy = target.GetComponent<IEnemy>();
     }
 
     private void Update()
@@ -47,23 +50,14 @@ public class SpellAttach : SpellBase
             }
         }
 
-        if (elapsed >= 1F)
-            Destroy(gameObject);
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        OnTriggerStay(collision.collider);
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        IEnemy recepient = other.GetComponent<IEnemy>();
-        if (recepient != null)
+        if (targetEnemy != null)
         {
             if (damagePerSecond != 0F)
-                recepient.TakeDamage(damagePerSecond, element, true);
+                targetEnemy.TakeDamage(damagePerSecond, element, true);
         }
+
+        if (elapsed >= 1F)
+            Destroy(gameObject);
     }
 
     public override bool Cast(ISpellParams parameters)

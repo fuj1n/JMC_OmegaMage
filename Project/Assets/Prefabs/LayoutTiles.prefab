@@ -99,3 +99,5 @@ MonoBehaviour:
     template: {fileID: 1635743236778760, guid: c5621cae735d40d408618122f3c1b6ac, type: 2}
   - type: EntityUnlockElement
     template: {fileID: 1979979461631800, guid: a8aabb2eec2b2e24b9a36d058628bd6f, type: 2}
+  - type: BossGleeok
+    template: {fileID: 1626952308174830, guid: 8df0c510c2163a54dbb9a9ac7a16bc63, type: 2}
