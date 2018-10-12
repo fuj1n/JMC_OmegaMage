@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomsFile: {fileID: 4900000, guid: 4d45daa2023768348a3b945d3bb51fa5, type: 3}
+  originalRoomsFile: {fileID: 4900000, guid: 5f1ef4b9728d8634f83cb53ba13ea113, type: 3}
   roomId: 48
   tilePrefab: {fileID: 100000, guid: 84bf7187657d043eda6a4404d8d5abf6, type: 2}
   tileTextures:

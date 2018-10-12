@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -19,11 +20,16 @@ public class TileTexture
 
 public class LayoutTiles : MonoBehaviour
 {
+    public static bool loadOriginal = false;
+    public static string loadPath = "";
+
     public const int KEY_COUNT = 5;
 
     public static LayoutTiles instance;
 
     public TextAsset roomsFile; // The rooms JSON file
+    public TextAsset originalRoomsFile;
+
     public char roomId; // Current room ID
     public GameObject tilePrefab; // Prefab for all tiles
     public TileTexture[] tileTextures; // A list of named textures for tiles
@@ -56,7 +62,28 @@ public class LayoutTiles : MonoBehaviour
         tileAnchor = anchor.transform;
 
         // Read the JSON file
-        roomsData = JsonConvert.DeserializeObject<RoomsFile>(roomsFile.text);
+        RoomsFile customRooms = null;
+
+        if (!string.IsNullOrEmpty(loadPath))
+        {
+            try
+            {
+                customRooms = JsonConvert.DeserializeObject<RoomsFile>(File.ReadAllText(loadPath));
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Could not load custom rooms file due to a " + e.GetType().Name);
+                Debug.LogError(e.StackTrace);
+            }
+        }
+        if (customRooms == null)
+            if (loadOriginal)
+                roomsData = JsonConvert.DeserializeObject<RoomsFile>(originalRoomsFile.text);
+            else
+                roomsData = JsonConvert.DeserializeObject<RoomsFile>(roomsFile.text);
+        else
+            roomsData = customRooms;
+
         roomId = roomsData.startingRoom;
     }
 
