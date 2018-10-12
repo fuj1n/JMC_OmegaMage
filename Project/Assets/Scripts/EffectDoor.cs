@@ -71,7 +71,7 @@ public class EffectDoor : MonoBehaviour
                     particles.Play();
                     DOTween.To(() => 1, x => { }, 0F, clip.length * 0.6F).OnComplete(() => particles.Stop());
                 }
-                background.transform.DOMove(background.transform.position + Vector3.down, clip.length).OnComplete(() =>
+                background.transform.DOMove(background.transform.position + Vector3.forward, clip.length).OnComplete(() =>
                 {
                     Mage.instance.gameObject.SetActive(true);
                     worldAnchor.SetActive(true);

@@ -18,5 +18,10 @@ public class Cheats : MonoBehaviour
                 invulnerability.fadeTime = 0F;
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Insert))
+        {
+            PortalBoss.KeyCollected(Random.Range(int.MinValue, 0));
+        }
     }
 }
