@@ -629,7 +629,7 @@ namespace WorldEdit
                         tex = roomsData[currentRoomId].floor;
                         break;
                     case "wall2":
-                        Text = roomsData[currentRoomId].wall2;
+                        tex = roomsData[currentRoomId].wall2;
                         break;
                     case "floor2":
                         tex = roomsData[currentRoomId].floor2;
