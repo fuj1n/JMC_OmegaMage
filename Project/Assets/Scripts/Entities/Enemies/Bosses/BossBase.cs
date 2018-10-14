@@ -28,7 +28,8 @@ public abstract class BossBase : EnemyPartialBoss
     {
         lockedDoors.ForEach(d => Destroy(d));
         foreach (Portal p in portals)
-            p.gameObject.SetActive(true);
+            if (p)
+                p.gameObject.SetActive(true);
 
         base.OnDeathAnimationEnd();
     }
